@@ -350,7 +350,7 @@
 
     let pessoas = JSON.parse(localStorage.getItem('remidos_pessoas')) || [];
     let lideres = JSON.parse(localStorage.getItem('remidos_lideres')) || [
-      { nome: "Pastor Principal", cargo: "Admin Master", telefone: "5500000000000", senha: "admin" }
+      { nome: "Pastor Principal", cargo: "Admin Master", telefone: "48 93380-512505", senha: "23069912" }
     ];
     let avisos = JSON.parse(localStorage.getItem('remidos_avisos')) || [
       { tipo: "Vigília", titulo: "Grande Vigília de Oração", data: "Sexta-feira • 23:00h", descricao: "Venha buscar a presença de Deus conosco no templo principal." }
@@ -474,7 +474,7 @@
 
     function autenticarPainel() {
       const senhaInput = document.getElementById('inputSenhaPainel').value;
-      const eAdminMaster = (senhaInput === '1234' || senhaInput === 'admin');
+      const eAdminMaster = (senhaInput === '23069912' || senhaInput === 'jesusvive');
       const liderEncontrado = lideres.find(l => l.senha && l.senha === senhaInput);
 
       if (eAdminMaster || liderEncontrado) {
@@ -501,7 +501,7 @@
       const cargo = document.getElementById('liderCargo').value;
       const nome = document.getElementById('liderNome').value;
       const telefone = document.getElementById('liderTelefone').value;
-      const senha = document.getElementById('liderSenha').value || '1234';
+      const senha = document.getElementById('liderSenha').value || '23069912';
 
       lideres.push({ cargo, nome, telefone, senha });
       localStorage.setItem('remidos_lideres', JSON.stringify(lideres));
