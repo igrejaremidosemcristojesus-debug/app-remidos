@@ -6,6 +6,8 @@
   <title>Igreja Evangélica Remidos em Cristo Jesus</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Biblioteca SheetJS para ler arquivos .xlsx diretamente no navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="manifest" href="data:application/json,{%22name%22:%22Remidos%20em%20Cristo%22,%22short_name%22:%22Remidos%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#0f172a%22,%22theme_color%22:%22#0f172a%22}">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-20 font-sans">
@@ -35,7 +37,7 @@
   <!-- CONTEÚDO PRINCIPAL -->
   <main class="max-w-md mx-auto p-4 space-y-6">
 
-    <!-- SEÇÃO 1: DEVOCIONAL DO DIA & MURAL DE AVISOS (PÚBLICO) -->
+    <!-- SEÇÃO 1: DEVOCIONAL DO DIA & MURAL DE AVISOS -->
     <section id="abaDevocional" class="space-y-4">
       
       <!-- Card Devocional do Dia -->
@@ -44,22 +46,22 @@
         
         <div class="flex items-center justify-between mb-3">
           <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded-full border border-amber-500/30 flex items-center gap-1">
-            <i class="fa-solid fa-sun"></i> Devocional de Hoje
+            <i class="fa-solid fa-sun"></i> <span id="devocionalDiaBadge">Devocional de Hoje</span>
           </span>
-          <span class="text-xs text-slate-400">07:00h (Diário)</span>
+          <span class="text-xs text-slate-400" id="devocionalDataBadge">Carregando...</span>
         </div>
 
-        <h2 id="devocionalTitulo" class="text-lg font-bold text-white mb-1">Um Novo Começo</h2>
-        <p id="devocionalVersiculo" class="text-xs font-semibold text-amber-400 italic mb-3">Lamentações 3:22-23</p>
+        <h2 id="devocionalTitulo" class="text-lg font-bold text-white mb-1">Carregando da planilha...</h2>
+        <p id="devocionalVersiculo" class="text-xs font-semibold text-amber-400 italic mb-3">...</p>
         
         <p id="devocionalTexto" class="text-sm text-slate-300 leading-relaxed mb-4">
-          As misericórdias do Senhor se renovam a cada manhã. Comece este dia sabendo que a fidelidade de Deus é maior que qualquer falha do passado.
+          Aguarde enquanto lemos o devocional de hoje direto da planilha da igreja.
         </p>
 
         <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
           <p class="text-xs font-semibold text-amber-400 mb-1"><i class="fa-solid fa-hands-praying"></i> Oração do Dia:</p>
           <p id="devocionalOracao" class="text-xs text-slate-400 italic">
-            Senhor, obrigado por este novo começo. Conduze meus passos e abençoa a nossa igreja.
+            ...
           </p>
         </div>
       </div>
@@ -76,17 +78,17 @@
         <div id="listaAvisos" class="space-y-3">
           <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
             <div class="flex justify-between items-start mb-1">
-              <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Culto Especial</span>
-              <span class="text-[10px] text-slate-500">Sexta-feira • 19:30h</span>
+              <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Culto Especial Hoje Sabádo</span>
+              <span class="text-[10px] text-slate-500">Sexta-feira • 23:00h</span>
             </div>
-            <p class="text-sm font-semibold text-slate-200">Culto de Poder neste sabado em especial</p>
-            <p class="text-xs text-slate-400 mt-1">Venha buscar a presença de Deus conosco no templo principal.</p>
+            <p class="text-sm font-semibold text-slate-200">Culto Especial</p>
+            <p class="text-xs text-slate-400 mt-1">Em especial hoje dia 24/10/2026 Culto antecipado para hoje devido as Eleições de 2026 que acontece amanha Domingo.Venha buscar a presença de Deus conosco no templo principal.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SEÇÃO 2: CULTOS E PROGRAMAÇÃO (PÚBLICO) -->
+    <!-- SEÇÃO 2: CULTOS E PROGRAMAÇÃO -->
     <section id="abaCultos" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <h3 class="font-bold text-white text-base mb-4 flex items-center gap-2">
@@ -115,7 +117,7 @@
       </div>
     </section>
 
-    <!-- SEÇÃO 3: PEDIDOS DE ORAÇÃO (PÚBLICO) -->
+    <!-- SEÇÃO 3: PEDIDOS DE ORAÇÃO -->
     <section id="abaOracao" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <h3 class="font-bold text-white text-base mb-1 flex items-center gap-2">
@@ -146,7 +148,7 @@
       </div>
     </section>
 
-    <!-- SEÇÃO 4: PAINEL JESUSVIVE E CADASTROS RESTRITOS (EXCLUSIVO COM SENHA) -->
+    <!-- SEÇÃO 4: PAINEL JESUSVIVE (EXCLUSIVO COM SENHA) -->
     <section id="abaPainel" class="space-y-4 hidden">
       
       <!-- Modal Login / Confirmação de Senha Jesusvive -->
@@ -156,7 +158,7 @@
         </div>
         <div>
           <h3 class="text-base font-bold text-white">Área Restrita da Liderança</h3>
-          <p class="text-xs text-slate-400">Informe sua senha de acesso para gerenciar cadastros e devocionais.</p>
+          <p class="text-xs text-slate-400">Informe sua senha de acesso para gerenciar cadastros e avisos.</p>
         </div>
         <div class="space-y-2">
           <input type="password" id="inputSenhaPainel" placeholder="Digite sua senha de acesso" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white text-center focus:outline-none focus:border-amber-500">
@@ -175,18 +177,18 @@
           <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
         </div>
 
-        <!-- 1. Cadastrar Membro ou Visitante (Apenas Liderança Autorizada) -->
+        <!-- 1. Cadastrar Visitante (Disponível para qualquer líder autenticado) OU Membro (Apenas Master) -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
-            <i class="fa-solid fa-user-plus text-amber-500"></i> Cadastrar Membro / Visitante
+            <i class="fa-solid fa-user-plus text-amber-500"></i> Ficha de Cadastro
           </h3>
-          <p class="text-xs text-slate-400 mb-3">Adicione novos membros ou visitantes ao sistema da igreja.</p>
+          <p class="text-xs text-slate-400 mb-3" id="descricaoCadastroPermissao">Cadastre novos visitantes.</p>
 
           <form id="formPessoa" onsubmit="cadastrarPessoa(event)" class="space-y-3">
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo</label>
               <select id="pessoaTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
-                <option value="Membro">Membro da Igreja</option>
+                <!-- Opção Membro será controlada por JS (visível apenas para Master) -->
                 <option value="Visitante">Visitante</option>
               </select>
             </div>
@@ -203,47 +205,19 @@
             </button>
           </form>
 
-          <!-- Lista de Pessoas Cadastradas -->
-          <div class="mt-4 pt-4 border-t border-slate-800">
-            <h4 class="text-xs font-bold text-slate-400 mb-2">Pessoas Cadastradas</h4>
+          <!-- Lista de Pessoas Cadastradas (Apenas Master visualiza lista completa de membros/visitantes) -->
+          <div id="blocoListaPessoasGeral" class="mt-4 pt-4 border-t border-slate-800 hidden">
+            <h4 class="text-xs font-bold text-slate-400 mb-2">Pessoas Cadastradas no Sistema</h4>
             <div id="listaPessoas" class="space-y-2 text-xs">
               <!-- Gerado via JS -->
             </div>
           </div>
         </div>
 
-        <!-- 2. Atualizar Devocional do Dia -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <!-- 2. Publicar Aviso no Mural (EXCLUSIVO PARA MASTER) -->
+        <div id="blocoPublicarAviso" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl hidden">
           <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-pen-to-square text-amber-500"></i> Devocional Diário (07:00h)
-          </h3>
-          <form onsubmit="salvarDevocional(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Título</label>
-              <input type="text" id="editDevTitulo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Versículo (Ex: João 3:16)</label>
-              <input type="text" id="editDevVersiculo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Reflexão</label>
-              <textarea id="editDevTexto" rows="3" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white"></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Oração</label>
-              <input type="text" id="editDevOracao" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl text-xs transition-all">
-              Atualizar Devocional
-            </button>
-          </form>
-        </div>
-
-        <!-- 3. Publicar Aviso no Mural -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-          <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos
+            <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos <span class="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded font-normal">Exclusivo Master</span>
           </h3>
           <form onsubmit="adicionarAviso(event)" class="space-y-3">
             <div>
@@ -273,10 +247,10 @@
           </form>
         </div>
 
-        <!-- 4. Cadastrar Liderança (Exclusivo Master) -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <!-- 3. Cadastrar Liderança (EXCLUSIVO PARA MASTER) -->
+        <div id="blocoCadastrarLideranca" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl hidden">
           <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-user-shield text-amber-500"></i> Cadastrar Liderança / Equipe
+            <i class="fa-solid fa-user-shield text-amber-500"></i> Cadastrar Liderança / Equipe <span class="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded font-normal">Exclusivo Master</span>
           </h3>
           <form onsubmit="cadastrarLideranca(event)" class="space-y-3">
             <div>
@@ -343,10 +317,11 @@
     </div>
   </nav>
 
-  <!-- SCRIPTS E LÓGICA -->
+  <!-- SCRIPTS E LÓGICA DE PERMISSÕES -->
   <script>
     let perfilAtual = 'membro';
     let painelAutenticado = false;
+    let usuarioLogadoIsMaster = false;
 
     let pessoas = JSON.parse(localStorage.getItem('remidos_pessoas')) || [];
     let lideres = JSON.parse(localStorage.getItem('remidos_lideres')) || [
@@ -360,15 +335,45 @@
       renderizarPessoas();
       renderizarLideres();
       renderizarAvisos();
-      
-      const devSalvo = JSON.parse(localStorage.getItem('remidos_devocional'));
-      if (devSalvo) {
-        document.getElementById('devocionalTitulo').innerText = devSalvo.titulo;
-        document.getElementById('devocionalVersiculo').innerText = devSalvo.versiculo;
-        document.getElementById('devocionalTexto').innerText = devSalvo.texto;
-        document.getElementById('devocionalOracao').innerText = devSalvo.oracao;
-      }
+      carregarDevocionalDaPlanilha();
     };
+
+    // LEITURA AUTOMÁTICA DA PLANILHA devocionais-365.xlsx
+    async function carregarDevocionalDaPlanilha() {
+      try {
+        let resposta = await fetch('devocionais-365.xlsx');
+        let dadosBuffer = await resposta.arrayBuffer();
+        let workbook = XLSX.read(dadosBuffer, { type: 'array' });
+        
+        let nomePrimeiraAba = workbook.SheetNames[0];
+        let worksheet = workbook.Sheets[nomePrimeiraAba];
+        let listaDevocionais = XLSX.utils.sheet_to_json(worksheet);
+
+        let hoje = new Date();
+        let diaStr = String(hoje.getDate()).padStart(2, '0');
+        let mesStr = String(hoje.getMonth() + 1).padStart(2, '0');
+        let dataHojeFormatada = `${diaStr}/${mesStr}`;
+
+        let devocionalHoje = listaDevocionais.find(d => String(d.Data).trim() === dataHojeFormatada);
+
+        if (!devocionalHoje && listaDevocionais.length > 0) {
+          let diaDoAno = Math.floor((hoje - new Date(hoje.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+          let indice = (diaDoAno - 1) % listaDevocionais.length;
+          devocionalHoje = listaDevocionais[indice];
+        }
+
+        if (devocionalHoje) {
+          document.getElementById('devocionalDiaBadge').innerText = `Devocional – Dia ${devocionalHoje.Dia || 'Hoje'}`;
+          document.getElementById('devocionalDataBadge').innerText = devocionalHoje.Data ? `Hoje, ${devocionalHoje.Data}` : 'Hoje, 07:00h';
+          document.getElementById('devocionalTitulo').innerText = devocionalHoje.Tema || devocionalHoje.Título || 'Palavra do Dia';
+          document.getElementById('devocionalVersiculo').innerText = devocionalHoje['Referência bíblica'] || devocionalHoje.Versículo || '';
+          document.getElementById('devocionalTexto').innerText = devocionalHoje.Reflexão || devocionalHoje.Texto || '';
+          document.getElementById('devocionalOracao').innerText = devocionalHoje.Oração || '';
+        }
+      } catch (erro) {
+        console.log("Erro ao carregar planilha automaticamente:", erro);
+      }
+    }
 
     function setPerfil(perfil) {
       perfilAtual = perfil;
@@ -443,7 +448,13 @@
 
     function cadastrarPessoa(event) {
       event.preventDefault();
-      const tipo = document.getElementById('pessoaTipo').value;
+      
+      // Se não for master, força o tipo para "Visitante" independentemente do select
+      let tipo = document.getElementById('pessoaTipo').value;
+      if (!usuarioLogadoIsMaster) {
+        tipo = 'Visitante';
+      }
+
       const nome = document.getElementById('pessoaNome').value;
       const tel = document.getElementById('pessoaTelefone').value;
 
@@ -479,11 +490,43 @@
 
       if (eAdminMaster || liderEncontrado) {
         painelAutenticado = true;
+        
+        // Define se é master geral ou líder comum
+        if (eAdminMaster || (liderEncontrado && liderEncontrado.cargo === 'Admin Master')) {
+          usuarioLogadoIsMaster = true;
+        } else {
+          usuarioLogadoIsMaster = false;
+        }
+
         document.getElementById('painelBloqueado').classList.add('hidden');
         document.getElementById('painelLiberado').classList.remove('hidden');
         
-        const cargoNome = eAdminMaster ? 'Admin Master' : `${liderEncontrado.cargo}: ${liderEncontrado.nome}`;
+        const cargoNome = usuarioLogadoIsMaster ? 'Admin Master' : `${liderEncontrado.cargo}: ${liderEncontrado.nome}`;
         document.getElementById('labelPerfilAutenticado').innerHTML = `<i class="fa-solid fa-user-shield"></i> Autenticado como ${cargoNome}`;
+
+        // CONTROLE DE VISIBILIDADE DOS MÓDULOS CONFORME O PERFIL
+        const selectTipoPessoa = document.getElementById('pessoaTipo');
+        if (usuarioLogadoIsMaster) {
+          // Master vê opção de cadastrar Membro e Visitante + Lista completa + Mural + Cadastro de Liderança
+          selectTipoPessoa.innerHTML = `
+            <option value="Membro">Membro da Igreja</option>
+            <option value="Visitante">Visitante</option>
+          `;
+          document.getElementById('descricaoCadastroPermissao').innerText = "Adicione novos membros ou visitantes ao sistema.";
+          document.getElementById('blocoListaPessoasGeral').classList.remove('hidden');
+          document.getElementById('blocoPublicarAviso').classList.remove('hidden');
+          document.getElementById('blocoCadastrarLideranca').classList.remove('hidden');
+        } else {
+          // Demais líderes (Pastor/Líder/Intercessor) veem apenas cadastro de Visitantes
+          selectTipoPessoa.innerHTML = `
+            <option value="Visitante">Visitante</option>
+          `;
+          document.getElementById('descricaoCadastroPermissao').innerText = "Adicione novos visitantes ao sistema da igreja.";
+          document.getElementById('blocoListaPessoasGeral').classList.add('hidden');
+          document.getElementById('blocoPublicarAviso').classList.add('hidden');
+          document.getElementById('blocoCadastrarLideranca').classList.add('hidden');
+        }
+
       } else {
         alert('Senha incorreta!');
       }
@@ -491,12 +534,17 @@
 
     function sairPainel() {
       painelAutenticado = false;
+      usuarioLogadoIsMaster = false;
       document.getElementById('inputSenhaPainel').value = '';
       document.getElementById('painelBloqueado').classList.remove('hidden');
       document.getElementById('painelLiberado').classList.add('hidden');
     }
 
     function cadastrarLideranca(event) {
+      if (!usuarioLogadoIsMaster) {
+        alert('Acesso negado. Apenas o Admin Master pode cadastrar nova liderança.');
+        return;
+      }
       event.preventDefault();
       const cargo = document.getElementById('liderCargo').value;
       const nome = document.getElementById('liderNome').value;
@@ -515,6 +563,7 @@
 
     function renderizarLideres() {
       const lista = document.getElementById('listaLideranca');
+      if (!lista) return;
       if (lideres.length === 0) {
         lista.innerHTML = `<p class="text-slate-500 italic">Nenhum líder cadastrado.</p>`;
         return;
@@ -530,25 +579,11 @@
       `).join('');
     }
 
-    function salvarDevocional(event) {
-      event.preventDefault();
-      const titulo = document.getElementById('editDevTitulo').value;
-      const versiculo = document.getElementById('editDevVersiculo').value;
-      const texto = document.getElementById('editDevTexto').value;
-      const oracao = document.getElementById('editDevOracao').value;
-
-      const devObj = { titulo, versiculo, texto, oracao };
-      localStorage.setItem('remidos_devocional', JSON.stringify(devObj));
-
-      document.getElementById('devocionalTitulo').innerText = titulo;
-      document.getElementById('devocionalVersiculo').innerText = versiculo;
-      document.getElementById('devocionalTexto').innerText = texto;
-      document.getElementById('devocionalOracao').innerText = oracao;
-
-      alert('Devocional atualizado com sucesso!');
-    }
-
     function adicionarAviso(event) {
+      if (!usuarioLogadoIsMaster) {
+        alert('Acesso negado. Apenas o Admin Master pode publicar no mural.');
+        return;
+      }
       event.preventDefault();
       const tipo = document.getElementById('avisoTipo').value;
       const titulo = document.getElementById('avisoTitulo').value;
