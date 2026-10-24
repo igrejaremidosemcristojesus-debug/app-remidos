@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Igreja Evangélica Remidos em Cristo Jesus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            purple: {
+              950: '#0f0a1a',
+              900: '#1b122c',
+              800: '#2d1847',
+              700: '#48206d',
+              600: '#642b93',
+              500: '#833ab4',
+              100: '#f3e8ff'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0f0a1a; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .glass-card { background: rgba(45, 24, 71, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .glass-input { background: rgba(15, 10, 26, 0.7); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; }
+    .glass-input:focus { border-color: #833ab4; outline: none; }
+    .active-tab { background-color: #642b93; color: white; }
+  </style>
+</head>
+<body class="text-gray-100 min-h-screen flex flex-col items-center justify-center p-2 sm:p-6">
+
+  <!-- Container Principal da Aplicação -->
+  <div class="w-full max-w-md bg-purple-900 rounded-3xl shadow-2xl border border-purple-700/50 overflow-hidden flex flex-col min-h-[780px]">
+    
+    <!-- Cabeçalho Superior -->
+    <header class="bg-gradient-to-b from-purple-800 to-purple-900 p-4 border-b border-purple-700/40 relative">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-purple-950 border border-purple-500/40 flex items-center justify-center p-1 shadow-md overflow-hidden shrink-0">
+            <img src="logo.jpg" alt="Logo Igreja Remidos" class="w-full h-full object-contain rounded-lg">
+          </div>
+          <div>
+            <h1 class="font-extrabold text-base tracking-wider text-white uppercase leading-tight">Remidos</h1>
+            <p class="text-[11px] text-purple-300 font-medium">Igreja Evangélica</p>
+          </div>
+        </div>
+        
+        <!-- Status do Perfil -->
+        <div id="user-badge" class="bg-purple-950/80 border border-purple-700/50 text-purple-300 text-[10px] px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+          <i class="fas fa-user text-purple-400"></i> <span id="badge-text">Membro</span>
+        </div>
+      </div>
+
+      <!-- Barra de Controle de Acesso -->
+      <div class="mt-3 flex justify-between items-center bg-purple-950/60 p-1 rounded-xl border border-purple-800/40">
+        <button onclick="setPerfil('membro')" id="btn-perfil-membro" class="flex-1 text-[11px] py-1 px-2 rounded-lg font-bold bg-purple-700 text-white transition">
+          <i class="fas fa-user-check mr-1"></i> Área do Membro
+        </button>
+        <button onclick="setPerfil('admin')" id="btn-perfil-admin" class="flex-1 text-[11px] py-1 px-2 rounded-lg font-bold text-purple-300 hover:text-white transition">
+          <i class="fas fa-user-shield mr-1"></i> Área da Liderança
+        </button>
+      </div>
+    </header>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="flex-1 p-4 overflow-y-auto space-y-4" id="main-content">
+      
+      <!-- TAB 1: DEVOCIONAL DO DIA COMPLETO -->
+      <section id="tab-devocional" class="space-y-4">
+        <div class="glass-card p-5 rounded-2xl border-l-4 border-purple-500 shadow-xl space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-purple-300 bg-purple-800/80 px-2.5 py-1 rounded-md">Devocional do Dia</span>
+            <span class="text-xs text-gray-400"><i class="far fa-calendar-alt mr-1"></i>Hoje</span>
+          </div>
+          
+          <div>
+            <h2 id="devocional-titulo-membro" class="text-xl font-bold text-white">Um novo começo</h2>
+            <p id="devocional-verso-membro" class="text-xs font-semibold text-purple-300 italic">Lamentações 3:22-23</p>
+          </div>
+
+          <div class="bg-purple-950/50 p-3.5 rounded-xl border border-purple-800/30">
+            <p class="text-xs font-bold text-purple-300 uppercase mb-1"><i class="fas fa-book-open mr-1"></i> Reflexão do Dia</p>
+            <p id="devocional-texto-membro" class="text-xs text-gray-200 leading-relaxed">
+              As misericórdias do Senhor se renovam a cada manhã. Comece este ano sabendo que a fidelidade de Deus é maior que qualquer falha do passado.
+            </p>
+          </div>
+
+          <div class="p-3 bg-purple-900/60 rounded-xl border border-purple-700/50">
+            <p class="text-xs font-bold text-purple-300 uppercase mb-1"><i class="fas fa-praying-hands mr-1"></i> Oração do Dia</p>
+            <p id="devocional-oracao-membro" class="text-xs text-gray-300 italic">"Senhor, obrigado por este novo começo. Conduze meus passos."</p>
+          </div>
+        </div>
+
+        <!-- Mural de Informações e Avisos (Vigílias, Festividades, Campanhas, etc.) -->
+        <div class="glass-card p-4 rounded-2xl space-y-3 border-t-2 border-amber-500">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+              <i class="fas fa-bullhorn text-amber-400"></i> Mural de Avisos & Agenda
+            </h3>
+            <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-semibold border border-amber-500/30">Informa</span>
+          </div>
+
+          <div id="mural-avisos-lista" class="space-y-2 text-xs">
+            <!-- Renderizado dinamicamente via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: PEDIDOS DE ORAÇÃO -->
+      <section id="tab-oracao" class="space-y-4 hidden">
+        <!-- Formulário de Envio do Membro -->
+        <div id="box-envio-oracao" class="glass-card p-4 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-heart text-purple-400 mr-2"></i>Enviar Pedido de Oração</h3>
+            <span class="text-[10px] bg-purple-800 text-purple-200 px-2 py-0.5 rounded-full font-bold">Exclusivo Membros</span>
+          </div>
+          <p class="text-xs text-gray-300">Seu pedido será direcionado diretamente para o WhatsApp dos nossos **Pastores, Líderes e Intercessores**.</p>
+          <form onsubmit="cadastrarOracao(event)" class="space-y-3">
+            <div>
+              <label class="text-xs text-purple-300 block mb-1">Seu WhatsApp (Validação de Membro)</label>
+              <input type="tel" id="tel-oracao" required placeholder="(11) 99999-9999" class="w-full glass-input p-2.5 rounded-xl text-xs">
+            </div>
+            <div>
+              <label class="text-xs text-purple-300 block mb-1">Seu Pedido de Oração</label>
+              <textarea id="texto-oracao" required rows="3" placeholder="Digite aqui o seu motivo de oração..." class="w-full glass-input p-2.5 rounded-xl text-xs"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+              <i class="fab fa-whatsapp text-sm"></i> Enviar Pedido via WhatsApp para Intercessores
+            </button>
+          </form>
+        </div>
+
+        <!-- Mural visível APENAS para Liderança/Pastores/Intercessores -->
+        <div id="box-gestao-oracoes" class="glass-card p-4 rounded-2xl">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-user-shield text-purple-400 mr-2"></i>Mural do Grupo de Intercessão</h3>
+            <span class="text-[10px] bg-red-900/80 text-red-200 px-2 py-0.5 rounded-full font-bold">Privado Equipe</span>
+          </div>
+          
+          <!-- Mensagem se for Membro -->
+          <div id="mensagem-membro-oracoes" class="p-3 bg-purple-950/60 rounded-xl border border-purple-800/40 text-xs text-purple-300 text-center">
+            <i class="fas fa-lock text-amber-400 mr-1"></i> Os pedidos enviados vão diretamente para o WhatsApp da equipe de intercessão e pastores.
+          </div>
+
+          <!-- Lista de Pedidos (Apenas se for Liderança/Admin) -->
+          <div id="lista-oracoes" class="space-y-2 text-xs hidden">
+            <!-- Renderizado dinamicamente via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: CULTOS E PROGRAMAÇÃO (ACESSO A TODOS) -->
+      <section id="tab-cultos" class="space-y-4 hidden">
+        <div class="glass-card p-4 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-church text-purple-400 mr-2"></i>Programação Regular de Cultos</h3>
+            <span class="text-[10px] bg-purple-800 text-purple-200 px-2 py-0.5 rounded-full font-bold">Aberto a Todos</span>
+          </div>
+          <p class="text-xs text-gray-300">Confira nossos horários de cultos e receba lembretes diretamente no WhatsApp.</p>
+          <div class="space-y-2">
+            <div class="p-3 bg-purple-950/50 rounded-xl border border-purple-700/40 flex items-center justify-between">
+              <div>
+                <p class="font-bold text-white text-xs">Culto da Quarta-feira</p>
+                <p class="text-[11px] text-purple-300"><i class="far fa-clock mr-1"></i> Horário: 20:00h</p>
+              </div>
+              <button onclick="dispararWhatsapp('Quarta')" class="bg-purple-700 hover:bg-purple-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow flex items-center gap-1">
+                <i class="fab fa-whatsapp"></i> Lembrete
+              </button>
+            </div>
+            <div class="p-3 bg-purple-950/50 rounded-xl border border-purple-700/40 flex items-center justify-between">
+              <div>
+                <p class="font-bold text-white text-xs">Culto da Família (Domingo)</p>
+                <p class="text-[11px] text-purple-300"><i class="far fa-clock mr-1"></i> Horário: 19:30h</p>
+              </div>
+              <button onclick="dispararWhatsapp('Domingo')" class="bg-purple-700 hover:bg-purple-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow flex items-center gap-1">
+                <i class="fab fa-whatsapp"></i> Lembrete
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: CADASTROS (MEMBROS E VISITANTES) -->
+      <section id="tab-cadastros" class="space-y-4 hidden">
+        <div class="flex bg-purple-950 p-1 rounded-xl border border-purple-800/50">
+          <button id="btn-form-membro" onclick="alternarAbaCadastro('membro')" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-purple-700 text-white transition">Novo Membro</button>
+          <button id="btn-form-visitante" onclick="alternarAbaCadastro('visitante')" class="flex-1 py-1.5 text-xs font-bold rounded-lg text-purple-300 hover:text-white transition">Novo Visitante</button>
+        </div>
+
+        <!-- Form Membro -->
+        <form id="form-membro" onsubmit="salvarCadastro(event, 'Membro')" class="glass-card p-4 rounded-2xl space-y-3">
+          <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-user-plus text-purple-400 mr-2"></i>Cadastro de Membro</h3>
+          <div>
+            <label class="text-xs text-purple-300 block mb-1">Nome Completo</label>
+            <input type="text" required placeholder="Ex: João da Silva" class="w-full glass-input p-2.5 rounded-xl text-xs">
+          </div>
+          <div>
+            <label class="text-xs text-purple-300 block mb-1">WhatsApp (DDD + Número)</label>
+            <input type="tel" required placeholder="(11) 99999-9999" class="w-full glass-input p-2.5 rounded-xl text-xs">
+          </div>
+          <div>
+            <label class="text-xs text-purple-300 block mb-1">Data de Nascimento</label>
+            <input type="date" class="w-full glass-input p-2.5 rounded-xl text-xs">
+          </div>
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition">Salvar Membro</button>
+        </form>
+
+        <!-- Form Visitante com Regra do Envio no Dia Seguinte -->
+        <form id="form-visitante" onsubmit="salvarCadastro(event, 'Visitante')" class="glass-card p-4 rounded-2xl space-y-3 hidden">
+          <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-hands-helping text-purple-400 mr-2"></i>Cadastro de Visitante</h3>
+          <div>
+            <label class="text-xs text-purple-300 block mb-1">Nome Completo</label>
+            <input type="text" required placeholder="Ex: Maria Santos" class="w-full glass-input p-2.5 rounded-xl text-xs">
+          </div>
+          <div>
+            <label class="text-xs text-purple-300 block mb-1">WhatsApp (DDD + Número)</label>
+            <input type="tel" required placeholder="(11) 98888-8888" class="w-full glass-input p-2.5 rounded-xl text-xs">
+          </div>
+          
+          <div class="p-3 bg-purple-950/80 rounded-xl border border-amber-500/40 text-[11px] text-amber-200 space-y-1">
+            <div class="font-bold flex items-center gap-1">
+              <i class="far fa-clock text-amber-400"></i> Agendamento Automático de Envio
+            </div>
+            <p>A mensagem de agradecimento será enviada **apenas no dia seguinte à visita** via WhatsApp:</p>
+            <p class="italic text-purple-200 bg-purple-900/60 p-2 rounded border border-purple-700/30">
+              "Paz do Senhor, [Nome]! Agradecemos imensamente a sua visita à Igreja Evangélica Remidos em Cristo Jesus. Foi uma bênção ter você conosco e esperamos muito pelo seu retorno em nossos cultos!"
+            </p>
+          </div>
+
+          <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg transition">
+            Cadastrar Visitante (Agendar Agradecimento)
+          </button>
+        </form>
+      </section>
+
+      <!-- TAB 5: PAINEL ADMIN (ACESSO RESTRITO / AUTORIZADO) -->
+      <section id="tab-admin" class="space-y-4 hidden">
+        <!-- Área exclusiva do Admin Principal -->
+        <div id="painel-exclusivo-admin" class="space-y-4">
+          
+          <!-- Gerenciador de Automações do WhatsApp -->
+          <div class="glass-card p-4 rounded-2xl space-y-3 border-l-4 border-green-500">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-green-300"><i class="fab fa-whatsapp text-green-400 mr-2"></i>Regras de Disparo Automático</h3>
+              <span class="text-[10px] bg-green-900/60 text-green-300 px-2 py-0.5 rounded-full font-bold">WhatsApp Bot</span>
+            </div>
+            
+            <div class="space-y-2 text-xs">
+              <!-- Devocional Diário -->
+              <div class="p-3 bg-purple-950/80 rounded-xl border border-purple-800/40 flex items-center justify-between">
+                <div>
+                  <p class="font-bold text-white"><i class="fas fa-book-bible text-purple-400 mr-1"></i> Devocional Diário (07:00h)</p>
+                  <p class="text-[10px] text-purple-300">Enviado para: Membros, Pastores e Líderes</p>
+                </div>
+                <button onclick="testarDisparo('devocional')" class="bg-purple-700 hover:bg-purple-600 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg shadow">
+                  Testar
+                </button>
+              </div>
+
+              <!-- Lembretes de Culto - Quarta e Domingo -->
+              <div class="p-3 bg-purple-950/80 rounded-xl border border-purple-800/40 space-y-2">
+                <div class="flex justify-between items-center">
+                  <p class="font-bold text-amber-300"><i class="far fa-bell mr-1"></i> Lembretes de Culto (10:00h e 15:00h)</p>
+                  <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">Quartas & Domingos</span>
+                </div>
+                <p class="text-[10px] text-gray-300 leading-relaxed">
+                  Disparos automáticos às <b>10:00h</b> (convite inicial) e às <b>15:00h</b> (reforço do culto) para toda a igreja.
+                </p>
+                <div class="flex gap-2 pt-1">
+                  <button onclick="testarDisparo('lembrete_10h')" class="flex-1 bg-amber-700 hover:bg-amber-600 text-white text-[10px] font-bold py-1 px-2 rounded-lg text-center">
+                    Simular 10:00h
+                  </button>
+                  <button onclick="testarDisparo('lembrete_15h')" class="flex-1 bg-amber-700 hover:bg-amber-600 text-white text-[10px] font-bold py-1 px-2 rounded-lg text-center">
+                    Simular 15:00h
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gerenciador do Devocional Automático -->
+          <div class="glass-card p-4 rounded-2xl space-y-3 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-magic text-purple-400 mr-2"></i>Devocional do Dia (Conteúdo)</h3>
+              <span class="text-[10px] bg-purple-800 text-purple-200 px-2 py-0.5 rounded-full font-bold">07:00h</span>
+            </div>
+            <p class="text-xs text-gray-300">Atualize o devocional manual ou ative a sincronização com sua planilha <b>devocionais-365.xlsx</b>.</p>
+            
+            <!-- Status de Conexão com Planilha -->
+            <div class="p-3 bg-purple-950/80 rounded-xl border border-purple-700/50 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-file-excel text-green-400 text-lg"></i>
+                <div>
+                  <p class="text-xs font-bold text-white">devocionais-365.xlsx</p>
+                  <p class="text-[10px] text-purple-300">Automação de Envio: <span class="text-green-400 font-bold">Ativa (07:00 AM)</span></p>
+                </div>
+              </div>
+              <button onclick="simularEnvioPlanilha()" class="bg-green-600 hover:bg-green-500 text-white text-[10px] font-bold py-1 px-2.5 rounded-lg shadow">
+                <i class="fab fa-whatsapp mr-1"></i> Sincronizar
+              </button>
+            </div>
+
+            <form onsubmit="salvarDevocional(event)" class="space-y-2.5">
+              <input type="text" id="admin-dev-titulo" required placeholder="Título do Devocional" class="w-full glass-input p-2.5 rounded-xl text-xs">
+              <input type="text" id="admin-dev-verso" required placeholder="Passagem Bíblica (Ex: Salmos 23:1)" class="w-full glass-input p-2.5 rounded-xl text-xs">
+              <textarea id="admin-dev-texto" required rows="3" placeholder="Texto da Reflexão..." class="w-full glass-input p-2.5 rounded-xl text-xs"></textarea>
+              <textarea id="admin-dev-oracao" required rows="2" placeholder="Oração do Dia..." class="w-full glass-input p-2.5 rounded-xl text-xs"></textarea>
+
+              <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs shadow">
+                <i class="fas fa-save mr-1"></i> Salvar & Agendar Envio do Devocional
+              </button>
+            </form>
+          </div>
+
+          <!-- Gerenciador do Mural de Avisos / Festividades -->
+          <div class="glass-card p-4 rounded-2xl space-y-3 border-l-4 border-amber-500">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-amber-300"><i class="fas fa-bullhorn text-amber-400 mr-2"></i>Publicar Aviso / Evento / Vigília</h3>
+              <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">Mural</span>
+            </div>
+            
+            <form onsubmit="cadastrarAviso(event)" class="space-y-2.5">
+              <select id="aviso-categoria" required class="w-full glass-input p-2.5 rounded-xl text-xs text-gray-200">
+                <option value="Festividade">🎉 Festividade</option>
+                <option value="Vigília">🔥 Vigília</option>
+                <option value="Campanha">📖 Campanha</option>
+                <option value="Aviso Geral">📢 Aviso Geral</option>
+              </select>
+              <input type="text" id="aviso-titulo" required placeholder="Título do Evento ou Aviso" class="w-full glass-input p-2.5 rounded-xl text-xs">
+              <input type="text" id="aviso-data" required placeholder="Data / Horário (Ex: Sábado às 23h)" class="w-full glass-input p-2.5 rounded-xl text-xs">
+              <textarea id="aviso-descricao" required rows="2" placeholder="Detalhes da informação..." class="w-full glass-input p-2.5 rounded-xl text-xs"></textarea>
+
+              <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded-xl text-xs shadow">
+                <i class="fas fa-plus-circle mr-1"></i> Publicar no Mural de Avisos
+              </button>
+            </form>
+          </div>
+
+          <!-- Cadastrar Equipe/Liderança -->
+          <div class="glass-card p-4 rounded-2xl space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-user-shield text-purple-400 mr-2"></i>Cadastrar Nova Equipe / Liderança</h3>
+              <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full">Exclusivo Admin</span>
+            </div>
+            <p class="text-xs text-gray-300">Cadastre pastores, líderes, intercessores ou um novo **Admin Master**.</p>
+            <form onsubmit="cadastrarAdmin(event)" class="space-y-2.5">
+              <input type="text" id="admin-nome" required placeholder="Nome Completo" class="w-full glass-input p-2.5 rounded-xl text-xs">
+              
+              <select id="admin-cargo" required class="w-full glass-input p-2.5 rounded-xl text-xs text-gray-200">
+                <option value="" disabled selected>Selecione a Função / Cargo...</option>
+                <option value="Admin Master">Admin Master (Acesso Total)</option>
+                <option value="Pastor">Pastor(a)</option>
+                <option value="Líder">Líder</option>
+                <option value="Intercessor">Intercessor(a)</option>
+              </select>
+
+              <input type="tel" id="admin-whatsapp" required placeholder="WhatsApp com DDD (para receber orações)" class="w-full glass-input p-2.5 rounded-xl text-xs">
+              
+              <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-xl text-xs shadow">
+                <i class="fas fa-user-plus mr-1"></i> Cadastrar na Equipe / Admin
+              </button>
+            </form>
+          </div>
+
+          <div class="glass-card p-4 rounded-2xl space-y-3">
+            <h3 class="text-sm font-bold text-purple-200"><i class="fas fa-users-cog text-purple-400 mr-2"></i>Equipe de Oração Cadastrada</h3>
+            <div id="lista-admins" class="space-y-1.5 text-xs">
+              <!-- Renderizado dinamicamente -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Navegação Inferior -->
+    <nav class="bg-purple-950 border-t border-purple-800/60 p-2 flex justify-around items-center">
+      <button onclick="mudarAba('devocional')" id="nav-devocional" class="flex flex-col items-center gap-1 text-purple-400 p-2 rounded-xl transition text-[10px] font-semibold active-tab">
+        <i class="fas fa-book-bible text-base"></i>
+        <span>Devocional</span>
+      </button>
+      <button onclick="mudarAba('oracao')" id="nav-oracao" class="flex flex-col items-center gap-1 text-purple-400 p-2 rounded-xl transition text-[10px] font-semibold">
+        <i class="fas fa-praying-hands text-base"></i>
+        <span>Oração</span>
+      </button>
+      <button onclick="mudarAba('cultos')" id="nav-cultos" class="flex flex-col items-center gap-1 text-purple-400 p-2 rounded-xl transition text-[10px] font-semibold">
+        <i class="fas fa-church text-base"></i>
+        <span>Cultos</span>
+      </button>
+      <button onclick="mudarAba('cadastros')" id="nav-cadastros" class="flex flex-col items-center gap-1 text-purple-400 p-2 rounded-xl transition text-[10px] font-semibold">
+        <i class="fas fa-users text-base"></i>
+        <span>Cadastros</span>
+      </button>
+      <button onclick="mudarAba('admin')" id="nav-admin" class="flex flex-col items-center gap-1 text-purple-400 p-2 rounded-xl transition text-[10px] font-semibold">
+        <i class="fas fa-cog text-base"></i>
+        <span>Painel</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script>
+    let perfilAtual = 'membro';
+
+    // Mock Data para Inicialização
+    let devocionalAtual = {
+      titulo: "Um novo começo",
+      verso: "Lamentações 3:22-23",
+      texto: "As misericórdias do Senhor se renovam a cada manhã. Comece este ano sabendo que a fidelidade de Deus é maior que qualquer falha do passado.",
+      oracao: "Senhor, obrigado por este novo começo. Conduze meus passos."
+    };
+
+    let bancoMembros = [
+      { nome: "João da Silva", whatsapp: "11999999999", dataNasc: "1990-01-01" }
+    ];
+
+    let bancoVisitantes = [];
+
+    let oracoes = [
+      { id: 1, autor: "João da Silva", texto: "Oração pela saúde da minha família.", data: "Hoje" }
+    ];
+
+    let avisosMural = [
+      { id: 1, categoria: "Festividade", titulo: "Grande Culto de Ações de Graças", data: "Sábado às 19:30h", descricao: "Venha participar conosco desta noite especial de louvor e gratidão a Deus." }
+    ];
+
+    let listaLideranca = [
+      { id: 1, nome: "Pastor Principal", cargo: "Pastor", whatsapp: "5511999999999", isMaster: true }
+    ];
+
+    // Função para simular disparos de mensagens do WhatsApp
+    function testarDisparo(tipo) {
+      const totalDestinatarios = bancoMembros.length + listaLideranca.length + bancoVisitantes.length;
+
+      if (tipo === 'devocional') {
+        alert(`📲 SIMULAÇÃO DE DISPARO (07:00h):\n\nDevocional enviado para ${totalDestinatarios} contatos (Membros, Liderança e Visitantes)!\n\nConteúdo:\n"📖 ${devocionalAtual.titulo}\n${devocionalAtual.verso}\n\n${devocionalAtual.texto}"`);
+      } else if (tipo === 'lembrete_10h') {
+        alert(`📲 SIMULAÇÃO DE DISPARO (10:00h - Lembrete Manhã):\n\nEnviado para ${totalDestinatarios} contatos!\n\nMensagem:\n"Paz do Senhor! Passando para lembrar do nosso Culto hoje. Prepare seu coração e venha adorar a Deus conosco!"`);
+      } else if (tipo === 'lembrete_15h') {
+        alert(`📲 SIMULAÇÃO DE DISPARO (15:00h - Reforço Tarde):\n\nEnviado para ${totalDestinatarios} contatos!\n\nMensagem:\n"Paz do Senhor! Falta pouco para o nosso Culto de hoje! Convide sua família e amigos. Esperamos por você!"`);
+      }
+    }
+
+    function setPerfil(perfil) {
+      if (perfil === 'admin' && perfilAtual !== 'admin') {
+        const senha = prompt("Acesso Restrito à Liderança / Admin!\nDigite a senha de acesso:");
+        if (senha !== "1234" && senha !== "admin") {
+          alert("Acesso negado! Senha incorreta.");
+          return;
+        }
+      }
+
+      perfilAtual = perfil;
+      const badgeText = document.getElementById('badge-text');
+      const btnMembro = document.getElementById('btn-perfil-membro');
+      const btnAdmin = document.getElementById('btn-perfil-admin');
+      const listaOracoes = document.getElementById('lista-oracoes');
+      const msgMembroOracoes = document.getElementById('mensagem-membro-oracoes');
+
+      if (perfil === 'admin') {
+        badgeText.innerText = "Liderança / Admin";
+        btnAdmin.className = "flex-1 text-[11px] py-1 px-2 rounded-lg font-bold bg-purple-700 text-white transition";
+        btnMembro.className = "flex-1 text-[11px] py-1 px-2 rounded-lg font-bold text-purple-300 hover:text-white transition";
+        if (listaOracoes) listaOracoes.classList.remove('hidden');
+        if (msgMembroOracoes) msgMembroOracoes.classList.add('hidden');
+      } else {
+        badgeText.innerText = "Membro";
+        btnMembro.className = "flex-1 text-[11px] py-1 px-2 rounded-lg font-bold bg-purple-700 text-white transition";
+        btnAdmin.className = "flex-1 text-[11px] py-1 px-2 rounded-lg font-bold text-purple-300 hover:text-white transition";
+        if (listaOracoes) listaOracoes.classList.add('hidden');
+        if (msgMembroOracoes) msgMembroOracoes.classList.remove('hidden');
+
+        // Se o usuário estiver em uma aba restrita (como Painel ou Cadastros), volta automaticamente para o Devocional
+        const tabAdmin = document.getElementById('tab-admin');
+        const tabCadastros = document.getElementById('tab-cadastros');
+        if ((tabAdmin && !tabAdmin.classList.contains('hidden')) || (tabCadastros && !tabCadastros.classList.contains('hidden'))) {
+          mudarAba('devocional');
+        }
+      }
+    }
+
+    // Dados do Devocional Atual
+    function simularEnvioPlanilha() {
+      alert(`🤖 Automação devocionais-365.xlsx:\n\n1. Leitura da linha de hoje na planilha executada com sucesso.\n2. Disparo agendado para 07:00 AM via WhatsApp API para ${bancoMembros.length} membros cadastrados!\n\nMensagem do teste:\n"${devocionalAtual.titulo} - ${devocionalAtual.verso}"`);
+    }
+
+    function mudarAba(aba) {
+      if ((aba === 'cadastros' || aba === 'admin') && perfilAtual !== 'admin') {
+        const senha = prompt("Acesso Restrito à Liderança / Admin!\nDigite a senha de acesso:");
+        if (senha === "1234" || senha === "admin") {
+          setPerfil('admin');
+        } else {
+          alert("Acesso negado! Permissão apenas para a Liderança.");
+          return;
+        }
+      }
+
+      ['devocional', 'oracao', 'cultos', 'cadastros', 'admin'].forEach(item => {
+        const elementoTab = document.getElementById('tab-' + item);
+        const elementoNav = document.getElementById('nav-' + item);
+        if (elementoTab) elementoTab.classList.add('hidden');
+        if (elementoNav) elementoNav.classList.remove('active-tab');
+      });
+
+      const tabDestino = document.getElementById('tab-' + aba);
+      const navDestino = document.getElementById('nav-' + aba);
+
+      if (tabDestino) tabDestino.classList.remove('hidden');
+      if (navDestino) navDestino.classList.add('active-tab');
+    }
+
+    function alternarAbaCadastro(tipo) {
+      if (tipo === 'membro') {
+        document.getElementById('form-membro').classList.remove('hidden');
+        document.getElementById('form-visitante').classList.add('hidden');
+        document.getElementById('btn-form-membro').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-purple-700 text-white transition";
+        document.getElementById('btn-form-visitante').className = "flex-1 py-1.5 text-xs font-bold rounded-lg text-purple-300 hover:text-white transition";
+      } else {
+        document.getElementById('form-membro').classList.add('hidden');
+        document.getElementById('form-visitante').classList.remove('hidden');
+        document.getElementById('btn-form-visitante').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-purple-700 text-white transition";
+        document.getElementById('btn-form-membro').className = "flex-1 py-1.5 text-xs font-bold rounded-lg text-purple-300 hover:text-white transition";
+      }
+    }
+
+    function limparTelefone(tel) {
+      return tel.replace(/\D/g, '');
+    }
+
+    function renderizarDevocional() {
+      document.getElementById('devocional-titulo-membro').innerText = devocionalAtual.titulo;
+      document.getElementById('devocional-verso-membro').innerText = devocionalAtual.verso;
+      document.getElementById('devocional-texto-membro').innerText = devocionalAtual.texto;
+      document.getElementById('devocional-oracao-membro').innerText = `"${devocionalAtual.oracao}"`;
+    }
+
+    function carregarFormDevocional() {
+      document.getElementById('admin-dev-titulo').value = devocionalAtual.titulo;
+      document.getElementById('admin-dev-verso').value = devocionalAtual.verso;
+      document.getElementById('admin-dev-texto').value = devocionalAtual.texto;
+      document.getElementById('admin-dev-oracao').value = devocionalAtual.oracao;
+    }
+
+    function salvarDevocional(e) {
+      e.preventDefault();
+      devocionalAtual.titulo = document.getElementById('admin-dev-titulo').value;
+      devocionalAtual.verso = document.getElementById('admin-dev-verso').value;
+      devocionalAtual.texto = document.getElementById('admin-dev-texto').value;
+      devocionalAtual.oracao = document.getElementById('admin-dev-oracao').value;
+
+      renderizarDevocional();
+      alert('✅ Devocional atualizado com sucesso! Ele foi atualizado na página principal e será disparado às 07:00h para os membros.');
+    }
+
+    function cadastrarAviso(e) {
+      e.preventDefault();
+      const cat = document.getElementById('aviso-categoria').value;
+      const tit = document.getElementById('aviso-titulo').value;
+      const dt = document.getElementById('aviso-data').value;
+      const desc = document.getElementById('aviso-descricao').value;
+
+      avisosMural.unshift({
+        id: Date.now(),
+        categoria: cat,
+        titulo: tit,
+        data: dt,
+        descricao: desc
+      });
+
+      renderizarMuralAvisos();
+      e.target.reset();
+      alert('📢 Novo aviso/evento publicado com sucesso no Mural!');
+    }
+
+    function renderizarMuralAvisos() {
+      const container = document.getElementById('mural-avisos-lista');
+      container.innerHTML = '';
+
+      if (avisosMural.length === 0) {
+        container.innerHTML = `<p class="text-xs text-purple-300 italic text-center py-2">Nenhum aviso no momento.</p>`;
+        return;
+      }
+
+      avisosMural.forEach(aviso => {
+        let icone = 'fa-info-circle';
+        let badgeColor = 'bg-purple-800 text-purple-200';
+
+        if (aviso.categoria === 'Festividade') {
+          icone = 'fa-glass-cheers';
+          badgeColor = 'bg-amber-800 text-amber-200';
+        } else if (aviso.categoria === 'Vigília') {
+          icone = 'fa-fire';
+          badgeColor = 'bg-red-800 text-red-200';
+        } else if (aviso.categoria === 'Campanha') {
+          icone = 'fa-book-reader';
+          badgeColor = 'bg-green-800 text-green-200';
+        }
+
+        const card = document.createElement('div');
+        card.className = "p-3 bg-purple-950/60 rounded-xl border border-purple-800/40 space-y-1";
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-white flex items-center gap-1.5 text-xs">
+              <i class="fas ${icone} text-amber-400"></i> ${aviso.titulo}
+            </span>
+            <span class="text-[9px] ${badgeColor} px-2 py-0.5 rounded-md font-semibold">${aviso.categoria}</span>
+          </div>
+          <p class="text-[11px] text-amber-200 font-medium"><i class="far fa-clock mr-1"></i>${aviso.data}</p>
+          <p class="text-[11px] text-gray-300 leading-relaxed">${aviso.descricao}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function cadastrarOracao(e) {
+      e.preventDefault();
+      const telDigitado = limparTelefone(document.getElementById('tel-oracao').value);
+      const texto = document.getElementById('texto-oracao').value;
+
+      // Validação do membro
+      const membroEncontrado = bancoMembros.find(membro => limparTelefone(membro.whatsapp) === telDigitado);
+
+      if (!membroEncontrado) {
+        const ehVisitante = bancoVisitantes.some(vis => limparTelefone(vis.whatsapp) === telDigitado);
+        if (ehVisitante) {
+          alert('⚠️ O envio de pedidos de oração é exclusivo para MEMBROS. Seu cadastro consta como VISITANTE.');
+        } else {
+          alert('❌ Número de WhatsApp não cadastrado como Membro! Entre em contato com a liderança.');
+        }
+        return;
+      }
+
+      // Adiciona o pedido localmente
+      oracoes.unshift({
+        id: Date.now(),
+        autor: membroEncontrado.nome,
+        texto: texto,
+        data: 'Hoje'
+      });
+
+      // Monta a mensagem para envio no WhatsApp
+      const mensagemWhatsApp = `*PEDIDO DE ORAÇÃO - REMIDOS INFORMA*%0A%0A*Membro:* ${membroEncontrado.nome}%0A*Pedido:* ${texto}%0A%0A_Favor colocar este pedido em oração com a equipe de Intercessão, Pastores e Líderes._`;
+
+      // Pega o primeiro contato de Pastor/Líder/Intercessor da lista para disparar
+      let destinatario = listaLideranca[0] ? limparTelefone(listaLideranca[0].whatsapp) : "5511999999999";
+      
+      const linkWa = `https://api.whatsapp.com/send?phone=${destinatario}&text=${mensagemWhatsApp}`;
+
+      document.getElementById('tel-oracao').value = '';
+      document.getElementById('texto-oracao').value = '';
+
+      alert(`🙏 Paz do Senhor, ${membroEncontrado.nome}! Seu pedido foi registrado. Vamos te redirecionar para o WhatsApp para entregar o pedido diretamente aos Pastores, Líderes e Intercessores.`);
+      
+      window.open(linkWa, '_blank');
+      renderizarOrações();
+    }
+
+    function renderizarOrações() {
+      const container = document.getElementById('lista-oracoes');
+      container.innerHTML = '';
+      oracoes.forEach(o => {
+        const card = document.createElement('div');
+        card.className = "p-3 bg-purple-950/40 rounded-xl border border-purple-800/30 space-y-1";
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-white">${o.autor}</span>
+            <span class="text-[10px] text-gray-400">${o.data}</span>
+          </div>
+          <p class="text-purple-200 text-xs">${o.texto}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderizarLideres() {
+      const container = document.getElementById('lista-admins');
+      container.innerHTML = '';
+      listaLideranca.forEach(lider => {
+        const item = document.createElement('div');
+        item.className = "p-2 bg-purple-950/40 rounded-lg flex justify-between items-center border border-purple-800/30";
+        item.innerHTML = `
+          <div>
+            <p class="font-bold text-white">${lider.nome}</p>
+            <p class="text-[10px] text-purple-300"><i class="fas fa-tag text-[9px] mr-1"></i>${lider.cargo} • Tel: ${lider.whatsapp}</p>
+          </div>
+          <span class="text-[10px] bg-green-900/60 text-green-300 px-2 py-0.5 rounded font-semibold">${lider.isMaster ? 'Admin Master' : 'Equipe'}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function salvarCadastro(e, tipo) {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input');
+      const nome = inputs[0].value;
+      const whatsapp = inputs[1].value;
+
+      if (tipo === 'Visitante') {
+        bancoVisitantes.push({ nome, whatsapp });
+        alert('✅ Visitante cadastrado com sucesso! Mensagem de agradecimento agendada para envio automático no DIA SEGUINTE via WhatsApp.');
+      } else {
+        const dataNasc = inputs[2] ? inputs[2].value : '';
+        bancoMembros.push({ nome, whatsapp, dataNasc });
+        alert(`✅ Membro ${nome} cadastrado com sucesso! Agora já pode enviar pedidos de oração e receber os devocionais diários.`);
+      }
+      e.target.reset();
+    }
+
+    function cadastrarAdmin(e) {
+      e.preventDefault();
+      const nome = document.getElementById('admin-nome').value;
+      const cargo = document.getElementById('admin-cargo').value;
+      const whatsapp = document.getElementById('admin-whatsapp').value;
+
+      const eMaster = cargo === 'Admin Master';
+
+      listaLideranca.push({
+        id: Date.now(),
+        nome: nome,
+        cargo: cargo,
+        whatsapp: whatsapp,
+        isMaster: eMaster
+      });
+      
+      alert(`✅ ${cargo} "${nome}" cadastrado(a) com sucesso!`);
+      e.target.reset();
+      renderizarLideres();
+    }
+
+    function dispararWhatsapp(tipo) {
+      if (tipo === 'Quarta') {
+        alert('🔔 Notificação enviada via WhatsApp para membros e visitantes:\n\n"Paz do Senhor! Lembramos que hoje, às 20:00h, teremos nosso Culto na Igreja Evangélica Remidos em Cristo Jesus. Esperamos por você!"');
+      } else if (tipo === 'Domingo') {
+        alert('🔔 Notificação enviada via WhatsApp para membros e visitantes:\n\n"Paz do Senhor! Lembramos que hoje, às 19:30h, teremos nosso Culto da Família na Igreja Evrawdios em Cristo Jesus. Venha adorar conosco!"');
+      }
+    }
+
+    renderizarDevocional();
+    renderizarMuralAvisos();
+    renderizarOrações();
+    renderizarLideres();
+  </script>
+</body>
+</html>
