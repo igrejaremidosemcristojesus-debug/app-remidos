@@ -146,10 +146,10 @@
       </div>
     </section>
 
-    <!-- SEÇÃO 4: PAINEL ADMIN E CADASTROS RESTRITOS (EXCLUSIVO COM SENHA) -->
+    <!-- SEÇÃO 4: PAINEL JESUSVIVE E CADASTROS RESTRITOS (EXCLUSIVO COM SENHA) -->
     <section id="abaPainel" class="space-y-4 hidden">
       
-      <!-- Modal Login / Confirmação de Senha Admin -->
+      <!-- Modal Login / Confirmação de Senha Jesusvive -->
       <div id="painelBloqueado" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-4">
         <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-xl">
           <i class="fa-solid fa-lock"></i>
@@ -273,7 +273,7 @@
           </form>
         </div>
 
-        <!-- 4. Cadastrar Liderança (Exclusivo Admin Master) -->
+        <!-- 4. Cadastrar Liderança (Exclusivo Master) -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
             <i class="fa-solid fa-user-shield text-amber-500"></i> Cadastrar Liderança / Equipe
@@ -338,7 +338,7 @@
 
       <button id="navPainel" onclick="mudarAba('abaPainel')" class="flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs">
         <i class="fa-solid fa-user-lock text-lg mb-0.5"></i>
-        <span>Painel Admin</span>
+        <span>Painel Jesusvive</span>
       </button>
     </div>
   </nav>
@@ -350,7 +350,7 @@
 
     let pessoas = JSON.parse(localStorage.getItem('remidos_pessoas')) || [];
     let lideres = JSON.parse(localStorage.getItem('remidos_lideres')) || [
-      { nome: "Pastor Principal", cargo: "Admin Master", telefone: "48 93380-512505", senha: "23069912" }
+      { nome: "Pastor Principal", cargo: "Admin Master", telefone: "5500000000000", senha: "23069912" }
     ];
     let avisos = JSON.parse(localStorage.getItem('remidos_avisos')) || [
       { tipo: "Vigília", titulo: "Grande Vigília de Oração", data: "Sexta-feira • 23:00h", descricao: "Venha buscar a presença de Deus conosco no templo principal." }
@@ -474,7 +474,7 @@
 
     function autenticarPainel() {
       const senhaInput = document.getElementById('inputSenhaPainel').value;
-      const eAdminMaster = (senhaInput === '23069912' || senhaInput === 'jesusvive');
+      const eAdminMaster = (senhaInput === '23069912');
       const liderEncontrado = lideres.find(l => l.senha && l.senha === senhaInput);
 
       if (eAdminMaster || liderEncontrado) {
