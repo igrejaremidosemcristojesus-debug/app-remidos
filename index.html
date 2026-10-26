@@ -89,7 +89,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Quarta-feira (20:00h)</span>
               <h4 class="font-bold text-white text-sm">Culto Profético</h4>
-              <p class="text-xs text-slate-400">Esperamos você.</p>
+              <p class="text-xs text-slate-400">Esperamos por você.</p>
             </div>
             <i class="fa-solid fa-book-bible text-2xl text-slate-700"></i>
           </div>
@@ -98,7 +98,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Domingo (19:30h)</span>
               <h4 class="font-bold text-white text-sm">Culto da Família e Celebração</h4>
-              <p class="text-xs text-slate-400">Esperamos você.</p>
+              <p class="text-xs text-slate-400">Esperamos por você.</p>
             </div>
             <i class="fa-solid fa-people-roof text-2xl text-slate-700"></i>
           </div>
@@ -157,22 +157,23 @@
 
       <div id="painelLiberado" class="space-y-4 hidden">
         <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
-          <span class="text-xs text-amber-400 font-bold" id="labelPerfilAutenticado"><i class="fa-solid fa-user-shield"></i> Autenticado como Admin Master</span>
+          <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-user-shield"></i> Admin Master</span>
           <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
         </div>
 
+        <!-- Bloco 1: Ficha de Cadastro (Membros / Visitantes) -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
             <i class="fa-solid fa-user-plus text-amber-500"></i> Ficha de Cadastro
           </h3>
-          <p class="text-xs text-slate-400 mb-4">Escolha se deseja cadastrar um Membro Oficial ou um Visitante.</p>
+          <p class="text-xs text-slate-400 mb-4">Cadastre novos membros ou visitantes.</p>
 
           <form id="formPessoa" onsubmit="salvarCadastro(event)" class="space-y-3">
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo de Cadastro</label>
               <select id="pessoaTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-                <option value="Membro">Membro Oficial (Vai para membros.json)</option>
-                <option value="Visitante">Visitante (Vai para visitantes.json)</option>
+                <option value="Membro">Membro Oficial (membros.json)</option>
+                <option value="Visitante">Visitante (visitantes.json)</option>
               </select>
             </div>
             <div>
@@ -184,10 +185,41 @@
               <input type="tel" id="pessoaTelefone" required placeholder="5511999999999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
             </div>
             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
-              Confirmar e Cadastrar
+              Salvar Cadastro
             </button>
           </form>
         </div>
+
+        <!-- Bloco 2: Gestão do Mural de Avisos -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+          <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Adicione um aviso para aparecer no mural de todos os usuários.</p>
+
+          <form id="formAviso" onsubmit="publicarAviso(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Categoria / Tipo</label>
+              <input type="text" id="avisoTipo" required placeholder="Ex: Vigília, Culto Especial, Reunião" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Título do Aviso</label>
+              <input type="text" id="avisoTitulo" required placeholder="Ex: Grande Vigília de Oração" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Data / Horário Exibição</label>
+              <input type="text" id="avisoData" required placeholder="Ex: Sexta-feira • 23:00h" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Descrição / Detalhes</label>
+              <textarea id="avisoDescricao" rows="2" required placeholder="Escreva os detalhes do aviso..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
+              Gerar Código do Aviso
+            </button>
+          </form>
+        </div>
+
       </div>
     </section>
 
@@ -337,8 +369,21 @@
 
       const arquivoDestino = tipo === 'Membro' ? 'membros.json' : 'visitantes.json';
 
-      alert(`Cadastro processado com sucesso!\n\nNome: ${nome}\nTipo: ${tipo}\n\nPara tornar permanente para todos os aparelhos, adicione os dados ao ficheiro "${arquivoDestino}" no GitHub.`);
+      alert(`Cadastro processado com sucesso!\n\nNome: ${nome}\nTipo: ${tipo}\n\nPara atualizar no site para todos, copie estes dados e insira no ficheiro "${arquivoDestino}" do GitHub.`);
       document.getElementById('formPessoa').reset();
+    }
+
+    function publicarAviso(e) {
+      e.preventDefault();
+      const tipo = document.getElementById('avisoTipo').value;
+      const titulo = document.getElementById('avisoTitulo').value;
+      const data = document.getElementById('avisoData').value;
+      const descricao = document.getElementById('avisoDescricao').value;
+
+      const novoAviso = { tipo, titulo, data, descricao };
+
+      alert(`Aviso gerado!\n\nCopie o bloco abaixo e cole dentro do ficheiro "avisos.json" no GitHub:\n\n` + JSON.stringify(novoAviso, null, 2));
+      document.getElementById('formAviso').reset();
     }
 
     function enviarPedidoOracao(e) {
@@ -348,7 +393,7 @@
       const texto = document.getElementById('oracaoTexto').value;
 
       const mensagem = `*PEDIDO DE ORAÇÃO - REMIDOS*\n\n*Nome:* ${nome}\n*Telefone:* ${tel}\n*Pedido:* ${texto}`;
-      window.open(`https://api.whatsapp.com/send?phone=5548933805179&text=${encodeURIComponent(mensagem)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=5500000000000&text=${encodeURIComponent(mensagem)}`, '_blank');
       alert('Pedido pronto para envio via WhatsApp!');
       document.getElementById('formOracao').reset();
     }
