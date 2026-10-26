@@ -89,7 +89,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Quarta-feira (20:00h)</span>
               <h4 class="font-bold text-white text-sm">Culto Profético</h4>
-              <p class="text-xs text-slate-400">Esperamos por você.</p>
+              <p class="text-xs text-slate-400">Esperamos por você</p>
             </div>
             <i class="fa-solid fa-book-bible text-2xl text-slate-700"></i>
           </div>
@@ -98,7 +98,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Domingo (19:30h)</span>
               <h4 class="font-bold text-white text-sm">Culto da Família e Celebração</h4>
-              <p class="text-xs text-slate-400">Esperamos por você.</p>
+              <p class="text-xs text-slate-400">Esperamos por você</p>
             </div>
             <i class="fa-solid fa-people-roof text-2xl text-slate-700"></i>
           </div>
@@ -195,7 +195,7 @@
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
             <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos
           </h3>
-          <p class="text-xs text-slate-400 mb-4">Adicione um aviso para aparecer no mural de todos os usuários.</p>
+          <p class="text-xs text-slate-400 mb-4">Adicione um aviso com expiração automática de 15 dias.</p>
 
           <form id="formAviso" onsubmit="publicarAviso(event)" class="space-y-3">
             <div>
@@ -215,7 +215,7 @@
               <textarea id="avisoDescricao" rows="2" required placeholder="Escreva os detalhes do aviso..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
             </div>
             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
-              Gerar Código do Aviso
+              Gerar Código do Aviso (Validade 15 Dias)
             </button>
           </form>
         </div>
@@ -256,12 +256,28 @@
       carregarAvisosDoJSON();
     };
 
+    // LEITURA DOS AVISOS COM REMOÇÃO AUTOMÁTICA APÓS 15 DIAS
     async function carregarAvisosDoJSON() {
       try {
         let resposta = await fetch('avisos.json');
         if (resposta.ok) {
           let avisos = await resposta.json();
-          renderizarAvisos(avisos);
+          
+          const hoje = new Date();
+          const limiteDias = 15;
+
+          // Filtra mantendo apenas os avisos publicados há 15 dias ou menos
+          let avisosValidos = avisos.filter(a => {
+            if (!a.criadoEm) return true; // Mantém por segurança caso não tenha o campo
+            
+            const dataCriacao = new Date(a.criadoEm);
+            const diferencaTempo = Math.abs(hoje - dataCriacao);
+            const diferencaDias = Math.ceil(diferencaTempo / (1000 * 60 * 60 * 24));
+
+            return diferencaDias <= limiteDias;
+          });
+
+          renderizarAvisos(avisosValidos);
         } else {
           document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
         }
@@ -273,7 +289,7 @@
     function renderizarAvisos(lista) {
       const el = document.getElementById('listaAvisos');
       if (!lista || lista.length === 0) {
-        el.innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso publicado.</p>`;
+        el.innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso publicado recentemente.</p>`;
         return;
       }
       el.innerHTML = lista.map(a => `
@@ -380,9 +396,16 @@
       const data = document.getElementById('avisoData').value;
       const descricao = document.getElementById('avisoDescricao').value;
 
-      const novoAviso = { tipo, titulo, data, descricao };
+      // Adiciona automaticamente a data do dia em que o aviso é criado (Formato YYYY-MM-DD)
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const criadoEm = `${ano}-${mes}-${dia}`;
 
-      alert(`Aviso gerado!\n\nCopie o bloco abaixo e cole dentro do ficheiro "avisos.json" no GitHub:\n\n` + JSON.stringify(novoAviso, null, 2));
+      const novoAviso = { tipo, titulo, data, descricao, criadoEm };
+
+      alert(`Aviso gerado com validade de 15 dias!\n\nCopie o bloco abaixo e cole dentro do ficheiro "avisos.json" no GitHub:\n\n` + JSON.stringify(novoAviso, null, 2));
       document.getElementById('formAviso').reset();
     }
 
