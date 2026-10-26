@@ -1,0 +1,12 @@
+[
+  {
+    "nome": "Pastor Principal",
+    "telefone": "5548933805179",
+    "tipo": "Membro"
+  },
+  {
+    "nome": "Visitante Exemplo",
+    "telefone": "5511888888888",
+    "tipo": "Visitante"
+  }
+]
