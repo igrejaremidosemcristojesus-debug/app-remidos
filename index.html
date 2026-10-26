@@ -251,13 +251,45 @@
   </nav>
 
   <script>
-    // URL da API do Google Sheets configurada com a nova implantação
+    // URL da API do Google Sheets
     const API_URL = 'https://script.google.com/macros/s/AKfycbz7kWPYibqA_gp9NOo1B6xd5xgOsJ7bSj8et-WUovO-vMU5HA6IJHeBiVWxg9m6rRci7g/exec';
 
     window.onload = function() {
       carregarDevocionalDaPlanilha();
       carregarAvisosDaAPI();
     };
+
+    // ALTERAÇÃO DE ABAS DA BARRA DE NAVEGAÇÃO
+    function mudarAba(idAba) {
+      const abas = ['abaDevocional', 'abaCultos', 'abaOracao', 'abaPainel'];
+      abas.forEach(aba => {
+        const el = document.getElementById(aba);
+        if (el) el.classList.add('hidden');
+      });
+
+      const abaAtiva = document.getElementById(idAba);
+      if (abaAtiva) abaAtiva.classList.remove('hidden');
+
+      // Atualiza estilo dos botões da navegação inferior
+      const mapeamentoBotoes = {
+        'abaDevocional': 'navDevocional',
+        'abaCultos': 'navCultos',
+        'abaOracao': 'navOracao',
+        'abaPainel': 'navPainel'
+      };
+
+      Object.values(mapeamentoBotoes).forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          btn.className = "flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs";
+        }
+      });
+
+      const btnAtivo = document.getElementById(mapeamentoBotoes[idAba]);
+      if (btnAtivo) {
+        btnAtivo.className = "flex flex-col items-center py-1 px-3 text-amber-500 font-bold text-xs";
+      }
+    }
 
     // ENVIO DO PEDIDO DE ORAÇÃO PARA A PLANILHA DO GOOGLE SHEETS
     async function enviarPedidoOracao(e) {
@@ -297,7 +329,7 @@
 
         alert("Pedido de oração enviado com sucesso!");
         document.getElementById('formOracao').reset();
-        document.getElementById('oracaoTelefone').value = "48991704111"; // Restaura o número padrão
+        document.getElementById('oracaoTelefone').value = "48991704111";
       } catch (erro) {
         console.error("Erro ao enviar pedido de oração:", erro);
         alert("Erro ao conectar com o servidor. Tente novamente.");
@@ -432,7 +464,7 @@
 
         alert('Cadastro realizado com sucesso!');
         document.getElementById('formPessoa').reset();
-        document.getElementById('pessoaTelefone').value = "48991704111"; // Restaura o número padrão
+        document.getElementById('pessoaTelefone').value = "48991704111";
       } catch (erro) {
         console.log("Erro:", erro);
         alert('Erro de conexão com a API.');
@@ -536,12 +568,6 @@
         btnMembro.className = "px-2.5 py-1 text-xs font-semibold rounded text-slate-400 transition-all";
         mudarAba('abaPainel');
       }
-    }
-
-    function mudarAba(idAba) {
-      const abas = ['abaDevocional', 'abaCultos', 'abaOracao', 'abaPainel'];
-      abas.forEach(aba => document.getElementById(aba).classList.add('hidden'));
-      document.getElementById(idAba).classList.remove('hidden');
     }
   </script>
 </body>
