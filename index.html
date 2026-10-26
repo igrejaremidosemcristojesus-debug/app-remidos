@@ -89,7 +89,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Quarta-feira (20:00h)</span>
               <h4 class="font-bold text-white text-sm">Culto Profético</h4>
-              <p class="text-xs text-slate-400">Estamos Esperando você.</p>
+              <p class="text-xs text-slate-400">Esperamos por você.</p>
             </div>
             <i class="fa-solid fa-book-bible text-2xl text-slate-700"></i>
           </div>
@@ -98,7 +98,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Domingo (19:30h)</span>
               <h4 class="font-bold text-white text-sm">Culto da Família e Celebração</h4>
-              <p class="text-xs text-slate-400">Estamos Esperando você.</p>
+              <p class="text-xs text-slate-400">Venha Celebrar Conosco.</p>
             </div>
             <i class="fa-solid fa-people-roof text-2xl text-slate-700"></i>
           </div>
@@ -157,7 +157,7 @@
 
       <div id="painelLiberado" class="space-y-4 hidden">
         <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
-          <span class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-user-shield"></i> Admin Master</span>
+          <span id="badgePerfilAdmin" class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-user-shield"></i> Admin Master</span>
           <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
         </div>
 
@@ -191,7 +191,7 @@
         </div>
 
         <!-- Bloco 2: Gestão do Mural de Avisos -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <div id="blocoPublicarAviso" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
             <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos
           </h3>
@@ -394,6 +394,53 @@
       btn.disabled = false;
     }
 
+    // AUTENTICAÇÃO COM DOIS NÍVEIS DE SENHA
+    function autenticarPainel() {
+      const senhaInput = document.getElementById('inputSenhaPainel').value;
+      
+      if (senhaInput === '23061929') { // Senha da Recepção (Apenas Visitantes)
+        document.getElementById('painelBloqueado').classList.add('hidden');
+        document.getElementById('painelLiberado').classList.remove('hidden');
+        
+        document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-check"></i> Recepção (Apenas Visitantes)`;
+        document.getElementById('blocoPublicarAviso').classList.add('hidden');
+        
+        // Fixa o tipo de cadastro apenas em Visitantes e desativa a seleção
+        const selectTipo = document.getElementById('pessoaTipo');
+        selectTipo.value = 'Visitantes';
+        selectTipo.disabled = true;
+        
+        alert('Acesso da Recepção liberado (Cadastro de Visitantes).');
+      } 
+      else if (senhaInput === '23069912') { // Senha Master (Acesso Total)
+        document.getElementById('painelBloqueado').classList.add('hidden');
+        document.getElementById('painelLiberado').classList.remove('hidden');
+        
+        document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin Master (Acesso Total)`;
+        document.getElementById('blocoPublicarAviso').classList.remove('hidden');
+        
+        const selectTipo = document.getElementById('pessoaTipo');
+        selectTipo.disabled = false;
+        
+        alert('Acesso Master liberado.');
+      } 
+      else {
+        alert('Senha incorreta!');
+      }
+    }
+
+    function sairPainel() {
+      document.getElementById('inputSenhaPainel').value = '';
+      document.getElementById('painelBloqueado').classList.remove('hidden');
+      document.getElementById('painelLiberado').classList.add('hidden');
+      
+      // Reseta os bloqueios ao sair
+      document.getElementById('blocoPublicarAviso').classList.remove('hidden');
+      const selectTipo = document.getElementById('pessoaTipo');
+      selectTipo.disabled = false;
+      selectTipo.value = 'Membros';
+    }
+
     async function carregarDevocionalDaPlanilha() {
       try {
         let resposta = await fetch('devocionais-365.xlsx');
@@ -451,22 +498,6 @@
       document.getElementById(idAba).classList.remove('hidden');
     }
 
-    function autenticarPainel() {
-      const senhaInput = document.getElementById('inputSenhaPainel').value;
-      if (senhaInput === '23069912') {
-        document.getElementById('painelBloqueado').classList.add('hidden');
-        document.getElementById('painelLiberado').classList.remove('hidden');
-      } else {
-        alert('Senha incorreta!');
-      }
-    }
-
-    function sairPainel() {
-      document.getElementById('inputSenhaPainel').value = '';
-      document.getElementById('painelBloqueado').classList.remove('hidden');
-      document.getElementById('painelLiberado').classList.add('hidden');
-    }
-
     function enviarPedidoOracao(e) {
       e.preventDefault();
       const nome = document.getElementById('oracaoNome').value;
@@ -474,7 +505,7 @@
       const texto = document.getElementById('oracaoTexto').value;
 
       const mensagem = `*PEDIDO DE ORAÇÃO - REMIDOS*\n\n*Nome:* ${nome}\n*Telefone:* ${tel}\n*Pedido:* ${texto}`;
-      window.open(`https://api.whatsapp.com/send?phone=55489338059710&text=${encodeURIComponent(mensagem)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=5548933805179&text=${encodeURIComponent(mensagem)}`, '_blank');
       alert('Pedido pronto para envio via WhatsApp!');
       document.getElementById('formOracao').reset();
     }
