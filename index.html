@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <!-- Mural de Avisos (Lido do avisos.json) -->
+      <!-- Mural de Avisos -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold text-white text-base flex items-center gap-2">
@@ -88,8 +88,8 @@
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
             <div>
               <span class="text-xs font-bold text-amber-400">Quarta-feira (20:00h)</span>
-              <h4 class="font-bold text-white text-sm">Culto de Doutrina e Oração</h4>
-              <p class="text-xs text-slate-400">Lembrete automático às 10h e 15h</p>
+              <h4 class="font-bold text-white text-sm">Culto Profético</h4>
+              <p class="text-xs text-slate-400">Esperamos você.</p>
             </div>
             <i class="fa-solid fa-book-bible text-2xl text-slate-700"></i>
           </div>
@@ -98,7 +98,7 @@
             <div>
               <span class="text-xs font-bold text-amber-400">Domingo (19:30h)</span>
               <h4 class="font-bold text-white text-sm">Culto da Família e Celebração</h4>
-              <p class="text-xs text-slate-400">Lembrete automático às 10h e 15h</p>
+              <p class="text-xs text-slate-400">Esperamos você.</p>
             </div>
             <i class="fa-solid fa-people-roof text-2xl text-slate-700"></i>
           </div>
@@ -112,7 +112,7 @@
         <h3 class="font-bold text-white text-base mb-1 flex items-center gap-2">
           <i class="fa-solid fa-hands-praying text-amber-500"></i> Pedido de Oração
         </h3>
-        <p class="text-xs text-slate-400 mb-4">Envie seu pedido diretamente para o WhatsApp dos pastores, líderes e intercessores.</p>
+        <p class="text-xs text-slate-400 mb-4">Envie seu pedido diretamente para o WhatsApp da equipe de oração.</p>
 
         <form id="formOracao" onsubmit="enviarPedidoOracao(event)" class="space-y-3">
           <div>
@@ -137,7 +137,7 @@
       </div>
     </section>
 
-    <!-- SEÇÃO 4: PAINEL JESUSVIVE -->
+    <!-- SEÇÃO 4: PAINEL DA LIDERANÇA -->
     <section id="abaPainel" class="space-y-4 hidden">
       <div id="painelBloqueado" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-4">
         <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-xl">
@@ -157,7 +157,7 @@
 
       <div id="painelLiberado" class="space-y-4 hidden">
         <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
-          <span class="text-xs text-amber-400 font-bold" id="labelPerfilAutenticado"><i class="fa-solid fa-user-shield"></i> Autenticado</span>
+          <span class="text-xs text-amber-400 font-bold" id="labelPerfilAutenticado"><i class="fa-solid fa-user-shield"></i> Autenticado como Admin Master</span>
           <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
         </div>
 
@@ -165,25 +165,26 @@
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
             <i class="fa-solid fa-user-plus text-amber-500"></i> Ficha de Cadastro
           </h3>
-          <p class="text-xs text-slate-400 mb-3" id="descricaoCadastroPermissao">Cadastre novos visitantes.</p>
+          <p class="text-xs text-slate-400 mb-4">Escolha se deseja cadastrar um Membro Oficial ou um Visitante.</p>
 
-          <form id="formPessoa" onsubmit="cadastrarPessoa(event)" class="space-y-3">
+          <form id="formPessoa" onsubmit="salvarCadastro(event)" class="space-y-3">
             <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo</label>
-              <select id="pessoaTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
-                <option value="Visitante">Visitante</option>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo de Cadastro</label>
+              <select id="pessoaTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+                <option value="Membro">Membro Oficial (Vai para membros.json)</option>
+                <option value="Visitante">Visitante (Vai para visitantes.json)</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Nome Completo</label>
-              <input type="text" id="pessoaNome" required placeholder="Nome completo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+              <input type="text" id="pessoaNome" required placeholder="Digite o nome completo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">WhatsApp / Telefone</label>
-              <input type="tel" id="pessoaTelefone" required placeholder="(00) 00000-0000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
+              <input type="tel" id="pessoaTelefone" required placeholder="5511999999999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
             </div>
             <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
-              Salvar Cadastro
+              Confirmar e Cadastrar
             </button>
           </form>
         </div>
@@ -212,26 +213,23 @@
 
       <button id="navPainel" onclick="mudarAba('abaPainel')" class="flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs">
         <i class="fa-solid fa-user-lock text-lg mb-0.5"></i>
-        <span>Painel Jesusvive</span>
+        <span>Painel</span>
       </button>
     </div>
   </nav>
 
   <script>
-    let avisosGlobal = [];
-
     window.onload = function() {
       carregarDevocionalDaPlanilha();
       carregarAvisosDoJSON();
     };
 
-    // LEITURA DOS AVISOS DO GITHUB (avisos.json)
     async function carregarAvisosDoJSON() {
       try {
         let resposta = await fetch('avisos.json');
         if (resposta.ok) {
-          avisosGlobal = await resposta.json();
-          renderizarAvisos(avisosGlobal);
+          let avisos = await resposta.json();
+          renderizarAvisos(avisos);
         } else {
           document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
         }
@@ -258,7 +256,6 @@
       `).join('');
     }
 
-    // LEITURA DO DEVOCIONAL (devocionais-365.xlsx)
     async function carregarDevocionalDaPlanilha() {
       try {
         let resposta = await fetch('devocionais-365.xlsx');
@@ -332,6 +329,18 @@
       document.getElementById('painelLiberado').classList.add('hidden');
     }
 
+    function salvarCadastro(e) {
+      e.preventDefault();
+      const tipo = document.getElementById('pessoaTipo').value;
+      const nome = document.getElementById('pessoaNome').value;
+      const tel = document.getElementById('pessoaTelefone').value;
+
+      const arquivoDestino = tipo === 'Membro' ? 'membros.json' : 'visitantes.json';
+
+      alert(`Cadastro processado com sucesso!\n\nNome: ${nome}\nTipo: ${tipo}\n\nPara tornar permanente para todos os aparelhos, adicione os dados ao ficheiro "${arquivoDestino}" no GitHub.`);
+      document.getElementById('formPessoa').reset();
+    }
+
     function enviarPedidoOracao(e) {
       e.preventDefault();
       const nome = document.getElementById('oracaoNome').value;
@@ -339,8 +348,8 @@
       const texto = document.getElementById('oracaoTexto').value;
 
       const mensagem = `*PEDIDO DE ORAÇÃO - REMIDOS*\n\n*Nome:* ${nome}\n*Telefone:* ${tel}\n*Pedido:* ${texto}`;
-      window.open(`https://api.whatsapp.com/send?phone=5500000000000&text=${encodeURIComponent(mensagem)}`, '_blank');
-      alert('Pedido enviado!');
+      window.open(`https://api.whatsapp.com/send?phone=5548933805179&text=${encodeURIComponent(mensagem)}`, '_blank');
+      alert('Pedido pronto para envio via WhatsApp!');
       document.getElementById('formOracao').reset();
     }
   </script>
