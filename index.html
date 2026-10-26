@@ -122,7 +122,7 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1">Seu Telefone / WhatsApp</label>
-            <input type="tel" id="oracaoTelefone" required placeholder="(00) 00000-0000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+            <input type="tel" id="oracaoTelefone" required value="48991704111" placeholder="(00) 00000-0000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
           </div>
 
           <div>
@@ -182,7 +182,7 @@
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">WhatsApp / Telefone</label>
-              <input type="tel" id="pessoaTelefone" required placeholder="5511999999999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+              <input type="tel" id="pessoaTelefone" required value="48991704111" placeholder="5511999999999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
             </div>
             <button type="submit" id="btnSalvarPessoa" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
               Salvar Cadastro Automaticamente
@@ -268,9 +268,16 @@
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando...`;
       btn.disabled = true;
 
-      const nome = document.getElementById('oracaoNome').value;
-      const telefone = document.getElementById('oracaoTelefone').value;
-      const pedido = document.getElementById('oracaoTexto').value;
+      const nome = document.getElementById('oracaoNome').value.trim();
+      const telefone = document.getElementById('oracaoTelefone').value.trim();
+      const pedido = document.getElementById('oracaoTexto').value.trim();
+
+      if (!telefone) {
+        alert("Por favor, preencha o número de telefone/WhatsApp.");
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+        return;
+      }
 
       const payload = {
         acao: "pedido_oracao",
@@ -282,15 +289,15 @@
       try {
         await fetch(API_URL, {
           method: "POST",
-          mode: "no-cors",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain;charset=utf-8"
           },
           body: JSON.stringify(payload)
         });
 
         alert("Pedido de oração enviado com sucesso!");
         document.getElementById('formOracao').reset();
+        document.getElementById('oracaoTelefone').value = "48991704111"; // Restaura o número padrão
       } catch (erro) {
         console.error("Erro ao enviar pedido de oração:", erro);
         alert("Erro ao conectar com o servidor. Tente novamente.");
@@ -376,9 +383,8 @@
       try {
         await fetch(API_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain;charset=utf-8'
           },
           body: JSON.stringify(payload)
         });
@@ -402,7 +408,7 @@
       btn.innerText = "Salvando...";
       btn.disabled = true;
 
-      const tipoAcao = document.getElementById('pessoaTipo').value; // 'Membros' ou 'Visitantes'
+      const tipoAcao = document.getElementById('pessoaTipo').value; 
       const nome = document.getElementById('pessoaNome').value;
       const telefone = document.getElementById('pessoaTelefone').value;
       const cadastradoEm = new Date().toISOString().split('T')[0];
@@ -418,15 +424,15 @@
       try {
         await fetch(API_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain;charset=utf-8'
           },
           body: JSON.stringify(payload)
         });
 
         alert('Cadastro realizado com sucesso!');
         document.getElementById('formPessoa').reset();
+        document.getElementById('pessoaTelefone').value = "48991704111"; // Restaura o número padrão
       } catch (erro) {
         console.log("Erro:", erro);
         alert('Erro de conexão com a API.');
@@ -440,7 +446,7 @@
     function autenticarPainel() {
       const senhaInput = document.getElementById('inputSenhaPainel').value;
       
-      if (senhaInput === '23061929') { // Senha da Recepção (Apenas Visitantes)
+      if (senhaInput === '23061929') { 
         document.getElementById('painelBloqueado').classList.add('hidden');
         document.getElementById('painelLiberado').classList.remove('hidden');
         
@@ -453,7 +459,7 @@
         
         alert('Acesso da Recepção liberado (Cadastro de Visitantes).');
       } 
-      else if (senhaInput === '23069912') { // Senha Master (Acesso Total)
+      else if (senhaInput === '23069912') { 
         document.getElementById('painelBloqueado').classList.add('hidden');
         document.getElementById('painelLiberado').classList.remove('hidden');
         
