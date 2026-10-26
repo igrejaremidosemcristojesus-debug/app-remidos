@@ -6,7 +6,6 @@
   <title>Igreja Evangélica Remidos em Cristo Jesus</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Biblioteca SheetJS para ler arquivos .xlsx diretamente no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="manifest" href="data:application/json,{%22name%22:%22Remidos%20em%20Cristo%22,%22short_name%22:%22Remidos%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#0f172a%22,%22theme_color%22:%22#0f172a%22}">
 </head>
@@ -22,7 +21,6 @@
           <p class="text-xs text-slate-400">Igreja Evangélica</p>
         </div>
       </div>
-      <!-- Alternância Rápida de Perfil -->
       <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
         <button id="btnPerfilMembro" onclick="setPerfil('membro')" class="px-2.5 py-1 text-xs font-semibold rounded bg-amber-500 text-slate-950 transition-all">
           Membro
@@ -60,13 +58,11 @@
 
         <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
           <p class="text-xs font-semibold text-amber-400 mb-1"><i class="fa-solid fa-hands-praying"></i> Oração do Dia:</p>
-          <p id="devocionalOracao" class="text-xs text-slate-400 italic">
-            ...
-          </p>
+          <p id="devocionalOracao" class="text-xs text-slate-400 italic">...</p>
         </div>
       </div>
 
-      <!-- Mural de Avisos, Festividades e Campanhas -->
+      <!-- Mural de Avisos (Lido do avisos.json) -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold text-white text-base flex items-center gap-2">
@@ -76,19 +72,12 @@
         </div>
 
         <div id="listaAvisos" class="space-y-3">
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-            <div class="flex justify-between items-start mb-1">
-              <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Culto Especial Hoje Sabádo</span>
-              <span class="text-[10px] text-slate-500">Sexta-feira • 23:00h</span>
-            </div>
-            <p class="text-sm font-semibold text-slate-200">Culto Especial</p>
-            <p class="text-xs text-slate-400 mt-1">Em especial hoje dia 24/10/2026 Culto antecipado para hoje devido as Eleições de 2026 que acontece amanha Domingo.Venha buscar a presença de Deus conosco no templo principal.</p>
-          </div>
+          <p class="text-slate-500 italic text-xs">Carregando avisos...</p>
         </div>
       </div>
     </section>
 
-    <!-- SEÇÃO 2: CULTOS E PROGRAMAÇÃO -->
+    <!-- SEÇÃO 2: CULTOS -->
     <section id="abaCultos" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <h3 class="font-bold text-white text-base mb-4 flex items-center gap-2">
@@ -99,7 +88,7 @@
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
             <div>
               <span class="text-xs font-bold text-amber-400">Quarta-feira (20:00h)</span>
-              <h4 class="font-bold text-white text-sm">Culto Profético</h4>
+              <h4 class="font-bold text-white text-sm">Culto de Doutrina e Oração</h4>
               <p class="text-xs text-slate-400">Lembrete automático às 10h e 15h</p>
             </div>
             <i class="fa-solid fa-book-bible text-2xl text-slate-700"></i>
@@ -117,7 +106,7 @@
       </div>
     </section>
 
-    <!-- SEÇÃO 3: PEDIDOS DE ORAÇÃO -->
+    <!-- SEÇÃO 3: ORAÇÃO -->
     <section id="abaOracao" class="space-y-4 hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
         <h3 class="font-bold text-white text-base mb-1 flex items-center gap-2">
@@ -148,10 +137,8 @@
       </div>
     </section>
 
-    <!-- SEÇÃO 4: PAINEL ADMINSTRADOR (EXCLUSIVO COM SENHA) -->
+    <!-- SEÇÃO 4: PAINEL JESUSVIVE -->
     <section id="abaPainel" class="space-y-4 hidden">
-      
-      <!-- Modal Login / Confirmação de Senha Jesusvive -->
       <div id="painelBloqueado" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-4">
         <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-xl">
           <i class="fa-solid fa-lock"></i>
@@ -168,16 +155,12 @@
         </div>
       </div>
 
-      <!-- Conteúdo Liberado do Painel -->
       <div id="painelLiberado" class="space-y-4 hidden">
-
-        <!-- Banner de Confirmação do Perfil Autenticado -->
         <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
           <span class="text-xs text-amber-400 font-bold" id="labelPerfilAutenticado"><i class="fa-solid fa-user-shield"></i> Autenticado</span>
           <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
         </div>
 
-        <!-- 1. Cadastrar Visitante (Disponível para qualquer líder autenticado) OU Membro (Apenas Master) -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
             <i class="fa-solid fa-user-plus text-amber-500"></i> Ficha de Cadastro
@@ -188,7 +171,6 @@
             <div>
               <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo</label>
               <select id="pessoaTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-sm text-white">
-                <!-- Opção Membro será controlada por JS (visível apenas para Master) -->
                 <option value="Visitante">Visitante</option>
               </select>
             </div>
@@ -204,95 +186,13 @@
               Salvar Cadastro
             </button>
           </form>
-
-          <!-- Lista de Pessoas Cadastradas (Apenas Master visualiza lista completa de membros/visitantes) -->
-          <div id="blocoListaPessoasGeral" class="mt-4 pt-4 border-t border-slate-800 hidden">
-            <h4 class="text-xs font-bold text-slate-400 mb-2">Pessoas Cadastradas no Sistema</h4>
-            <div id="listaPessoas" class="space-y-2 text-xs">
-              <!-- Gerado via JS -->
-            </div>
-          </div>
         </div>
-
-        <!-- 2. Publicar Aviso no Mural (EXCLUSIVO PARA MASTER) -->
-        <div id="blocoPublicarAviso" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl hidden">
-          <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos <span class="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded font-normal">Exclusivo Master</span>
-          </h3>
-          <form onsubmit="adicionarAviso(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo</label>
-              <select id="avisoTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                <option value="Festividade">Festividade</option>
-                <option value="Vigília">Vigília</option>
-                <option value="Campanha">Campanha</option>
-                <option value="Aviso Geral">Aviso Geral</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Título</label>
-              <input type="text" id="avisoTitulo" required placeholder="Ex: Grande Vigília" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Data / Horário</label>
-              <input type="text" id="avisoData" required placeholder="Ex: Sexta-feira • 23:00h" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Descrição</label>
-              <textarea id="avisoDescricao" rows="2" required placeholder="Detalhes..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white"></textarea>
-            </div>
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl text-xs transition-all">
-              Publicar Aviso
-            </button>
-          </form>
-        </div>
-
-        <!-- 3. Cadastrar Liderança (EXCLUSIVO PARA MASTER) -->
-        <div id="blocoCadastrarLideranca" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl hidden">
-          <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-user-shield text-amber-500"></i> Cadastrar Liderança / Equipe <span class="text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded font-normal">Exclusivo Master</span>
-          </h3>
-          <form onsubmit="cadastrarLideranca(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Função</label>
-              <select id="liderCargo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                <option value="Pastor(a)">Pastor(a)</option>
-                <option value="Líder">Líder</option>
-                <option value="Intercessor(a)">Intercessor(a)</option>
-                <option value="Admin Master">Admin Master (Acesso Total)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Nome</label>
-              <input type="text" id="liderNome" required placeholder="Nome completo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">WhatsApp</label>
-              <input type="tel" id="liderTelefone" required placeholder="(00) 00000-0000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Senha de Acesso ao Painel</label>
-              <input type="password" id="liderSenha" placeholder="Senha individual para este líder" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl text-xs transition-all">
-              Cadastrar Liderança
-            </button>
-          </form>
-
-          <div class="mt-4 pt-4 border-t border-slate-800">
-            <h4 class="text-xs font-bold text-slate-400 mb-2">Equipe Cadastrada</h4>
-            <div id="listaLideranca" class="space-y-2 text-xs">
-              <!-- Gerado via JS -->
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
 
   </main>
 
-  <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+  <!-- BARRA DE NAVEGAÇÃO -->
   <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-50">
     <div class="max-w-md mx-auto flex justify-around p-2">
       <button id="navDevocional" onclick="mudarAba('abaDevocional')" class="flex flex-col items-center py-1 px-3 text-amber-500 font-bold text-xs">
@@ -317,28 +217,48 @@
     </div>
   </nav>
 
-  <!-- SCRIPTS E LÓGICA DE PERMISSÕES -->
   <script>
-    let perfilAtual = 'membro';
-    let painelAutenticado = false;
-    let usuarioLogadoIsMaster = false;
-
-    let pessoas = JSON.parse(localStorage.getItem('remidos_pessoas')) || [];
-    let lideres = JSON.parse(localStorage.getItem('remidos_lideres')) || [
-      { nome: "Pastor Principal", cargo: "Admin Master", telefone: "5548933805178", senha: "23069912" }
-    ];
-    let avisos = JSON.parse(localStorage.getItem('remidos_avisos')) || [
-      { tipo: "Vigília", titulo: "Grande Vigília de Oração", data: "Sexta-feira • 23:00h", descricao: "Venha buscar a presença de Deus conosco no templo principal." }
-    ];
+    let avisosGlobal = [];
 
     window.onload = function() {
-      renderizarPessoas();
-      renderizarLideres();
-      renderizarAvisos();
       carregarDevocionalDaPlanilha();
+      carregarAvisosDoJSON();
     };
 
-    // LEITURA AUTOMÁTICA DA PLANILHA devocionais-365.xlsx
+    // LEITURA DOS AVISOS DO GITHUB (avisos.json)
+    async function carregarAvisosDoJSON() {
+      try {
+        let resposta = await fetch('avisos.json');
+        if (resposta.ok) {
+          avisosGlobal = await resposta.json();
+          renderizarAvisos(avisosGlobal);
+        } else {
+          document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
+        }
+      } catch (erro) {
+        console.log("Erro ao carregar avisos.json:", erro);
+      }
+    }
+
+    function renderizarAvisos(lista) {
+      const el = document.getElementById('listaAvisos');
+      if (!lista || lista.length === 0) {
+        el.innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso publicado.</p>`;
+        return;
+      }
+      el.innerHTML = lista.map(a => `
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+          <div class="flex justify-between items-start mb-1">
+            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">${a.tipo}</span>
+            <span class="text-[10px] text-slate-500">${a.data}</span>
+          </div>
+          <p class="text-sm font-semibold text-slate-200">${a.titulo}</p>
+          <p class="text-xs text-slate-400 mt-1">${a.descricao}</p>
+        </div>
+      `).join('');
+    }
+
+    // LEITURA DO DEVOCIONAL (devocionais-365.xlsx)
     async function carregarDevocionalDaPlanilha() {
       try {
         let resposta = await fetch('devocionais-365.xlsx');
@@ -371,12 +291,11 @@
           document.getElementById('devocionalOracao').innerText = devocionalHoje.Oração || '';
         }
       } catch (erro) {
-        console.log("Erro ao carregar planilha automaticamente:", erro);
+        console.log("Erro ao carregar planilha:", erro);
       }
     }
 
     function setPerfil(perfil) {
-      perfilAtual = perfil;
       const btnMembro = document.getElementById('btnPerfilMembro');
       const btnLider = document.getElementById('btnPerfilLider');
 
@@ -393,229 +312,36 @@
 
     function mudarAba(idAba) {
       const abas = ['abaDevocional', 'abaCultos', 'abaOracao', 'abaPainel'];
-      const navs = ['navDevocional', 'navCultos', 'navOracao', 'navPainel'];
-
-      abas.forEach(aba => {
-        document.getElementById(aba).classList.add('hidden');
-      });
-
-      navs.forEach(nav => {
-        const btn = document.getElementById(nav);
-        if (btn) {
-          btn.classList.remove('text-amber-500');
-          btn.classList.add('text-slate-400');
-        }
-      });
-
+      abas.forEach(aba => document.getElementById(aba).classList.add('hidden'));
       document.getElementById(idAba).classList.remove('hidden');
-
-      const navAtivoMap = {
-        'abaDevocional': 'navDevocional',
-        'abaCultos': 'navCultos',
-        'abaOracao': 'navOracao',
-        'abaPainel': 'navPainel'
-      };
-
-      const btnAtivo = document.getElementById(navAtivoMap[idAba]);
-      if (btnAtivo) {
-        btnAtivo.classList.remove('text-slate-400');
-        btnAtivo.classList.add('text-amber-500');
-      }
-    }
-
-    function enviarPedidoOracao(event) {
-      event.preventDefault();
-      const nome = document.getElementById('oracaoNome').value;
-      const tel = document.getElementById('oracaoTelefone').value;
-      const texto = document.getElementById('oracaoTexto').value;
-
-      let destTel = "5500000000000";
-      if (lideres.length > 0 && lideres[0].telefone) {
-        destTel = lideres[0].telefone.replace(/\D/g, '');
-      }
-
-      const mensagem = `*PEDIDO DE ORAÇÃO - REMIDOS*\n\n` +
-                       `*Nome:* ${nome}\n` +
-                       `*Telefone:* ${tel}\n` +
-                       `*Pedido:* ${texto}`;
-
-      const url = `https://api.whatsapp.com/send?phone=${destTel}&text=${encodeURIComponent(mensagem)}`;
-      window.open(url, '_blank');
-
-      alert('Pedido formatado e encaminhado para o WhatsApp da equipe!');
-      document.getElementById('formOracao').reset();
-    }
-
-    function cadastrarPessoa(event) {
-      event.preventDefault();
-      
-      // Se não for master, força o tipo para "Visitante" independentemente do select
-      let tipo = document.getElementById('pessoaTipo').value;
-      if (!usuarioLogadoIsMaster) {
-        tipo = 'Visitante';
-      }
-
-      const nome = document.getElementById('pessoaNome').value;
-      const tel = document.getElementById('pessoaTelefone').value;
-
-      pessoas.push({ tipo, nome, tel, data: new Date().toLocaleDateString() });
-      localStorage.setItem('remidos_pessoas', JSON.stringify(pessoas));
-
-      alert(`${tipo} cadastrado(a) com sucesso!`);
-      document.getElementById('formPessoa').reset();
-      renderizarPessoas();
-    }
-
-    function renderizarPessoas() {
-      const lista = document.getElementById('listaPessoas');
-      if (pessoas.length === 0) {
-        lista.innerHTML = `<p class="text-slate-500 italic">Nenhum cadastro realizado.</p>`;
-        return;
-      }
-      lista.innerHTML = pessoas.map(p => `
-        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-white">${p.nome}</span>
-            <p class="text-[10px] text-slate-400">${p.tel} • ${p.data}</p>
-          </div>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.tipo === 'Membro' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}">${p.tipo}</span>
-        </div>
-      `).join('');
     }
 
     function autenticarPainel() {
       const senhaInput = document.getElementById('inputSenhaPainel').value;
-      const eAdminMaster = (senhaInput === '23069912');
-      const liderEncontrado = lideres.find(l => l.senha && l.senha === senhaInput);
-
-      if (eAdminMaster || liderEncontrado) {
-        painelAutenticado = true;
-        
-        // Define se é master geral ou líder comum
-        if (eAdminMaster || (liderEncontrado && liderEncontrado.cargo === 'Admin Master')) {
-          usuarioLogadoIsMaster = true;
-        } else {
-          usuarioLogadoIsMaster = false;
-        }
-
+      if (senhaInput === '23069912') {
         document.getElementById('painelBloqueado').classList.add('hidden');
         document.getElementById('painelLiberado').classList.remove('hidden');
-        
-        const cargoNome = usuarioLogadoIsMaster ? 'Admin Master' : `${liderEncontrado.cargo}: ${liderEncontrado.nome}`;
-        document.getElementById('labelPerfilAutenticado').innerHTML = `<i class="fa-solid fa-user-shield"></i> Autenticado como ${cargoNome}`;
-
-        // CONTROLE DE VISIBILIDADE DOS MÓDULOS CONFORME O PERFIL
-        const selectTipoPessoa = document.getElementById('pessoaTipo');
-        if (usuarioLogadoIsMaster) {
-          // Master vê opção de cadastrar Membro e Visitante + Lista completa + Mural + Cadastro de Liderança
-          selectTipoPessoa.innerHTML = `
-            <option value="Membro">Membro da Igreja</option>
-            <option value="Visitante">Visitante</option>
-          `;
-          document.getElementById('descricaoCadastroPermissao').innerText = "Adicione novos membros ou visitantes ao sistema.";
-          document.getElementById('blocoListaPessoasGeral').classList.remove('hidden');
-          document.getElementById('blocoPublicarAviso').classList.remove('hidden');
-          document.getElementById('blocoCadastrarLideranca').classList.remove('hidden');
-        } else {
-          // Demais líderes (Pastor/Líder/Intercessor) veem apenas cadastro de Visitantes
-          selectTipoPessoa.innerHTML = `
-            <option value="Visitante">Visitante</option>
-          `;
-          document.getElementById('descricaoCadastroPermissao').innerText = "Adicione novos visitantes ao sistema da igreja.";
-          document.getElementById('blocoListaPessoasGeral').classList.add('hidden');
-          document.getElementById('blocoPublicarAviso').classList.add('hidden');
-          document.getElementById('blocoCadastrarLideranca').classList.add('hidden');
-        }
-
       } else {
         alert('Senha incorreta!');
       }
     }
 
     function sairPainel() {
-      painelAutenticado = false;
-      usuarioLogadoIsMaster = false;
       document.getElementById('inputSenhaPainel').value = '';
       document.getElementById('painelBloqueado').classList.remove('hidden');
       document.getElementById('painelLiberado').classList.add('hidden');
     }
 
-    function cadastrarLideranca(event) {
-      if (!usuarioLogadoIsMaster) {
-        alert('Acesso negado. Apenas o Admin Master pode cadastrar nova liderança.');
-        return;
-      }
-      event.preventDefault();
-      const cargo = document.getElementById('liderCargo').value;
-      const nome = document.getElementById('liderNome').value;
-      const telefone = document.getElementById('liderTelefone').value;
-      const senha = document.getElementById('liderSenha').value || '23069912';
+    function enviarPedidoOracao(e) {
+      e.preventDefault();
+      const nome = document.getElementById('oracaoNome').value;
+      const tel = document.getElementById('oracaoTelefone').value;
+      const texto = document.getElementById('oracaoTexto').value;
 
-      lideres.push({ cargo, nome, telefone, senha });
-      localStorage.setItem('remidos_lideres', JSON.stringify(lideres));
-
-      alert(`${cargo} cadastrado(a) com sucesso!`);
-      document.getElementById('liderNome').value = '';
-      document.getElementById('liderTelefone').value = '';
-      document.getElementById('liderSenha').value = '';
-      renderizarLideres();
-    }
-
-    function renderizarLideres() {
-      const lista = document.getElementById('listaLideranca');
-      if (!lista) return;
-      if (lideres.length === 0) {
-        lista.innerHTML = `<p class="text-slate-500 italic">Nenhum líder cadastrado.</p>`;
-        return;
-      }
-      lista.innerHTML = lideres.map(l => `
-        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex justify-between items-center">
-          <div>
-            <span class="font-bold text-white">${l.nome}</span>
-            <p class="text-[10px] text-slate-400">${l.telefone}</p>
-          </div>
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold ${l.cargo === 'Admin Master' ? 'bg-purple-500/20 text-purple-400' : 'bg-amber-500/20 text-amber-400'}">${l.cargo}</span>
-        </div>
-      `).join('');
-    }
-
-    function adicionarAviso(event) {
-      if (!usuarioLogadoIsMaster) {
-        alert('Acesso negado. Apenas o Admin Master pode publicar no mural.');
-        return;
-      }
-      event.preventDefault();
-      const tipo = document.getElementById('avisoTipo').value;
-      const titulo = document.getElementById('avisoTitulo').value;
-      const data = document.getElementById('avisoData').value;
-      const descricao = document.getElementById('avisoDescricao').value;
-
-      avisos.unshift({ tipo, titulo, data, descricao });
-      localStorage.setItem('remidos_avisos', JSON.stringify(avisos));
-
-      alert('Aviso publicado no mural!');
-      document.getElementById('avisoTitulo').value = '';
-      document.getElementById('avisoData').value = '';
-      document.getElementById('avisoDescricao').value = '';
-      renderizarAvisos();
-    }
-
-    function renderizarAvisos() {
-      const lista = document.getElementById('listaAvisos');
-      if (avisos.length === 0) {
-        lista.innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
-        return;
-      }
-      lista.innerHTML = avisos.map(a => `
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-          <div class="flex justify-between items-start mb-1">
-            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">${a.tipo}</span>
-            <span class="text-[10px] text-slate-500">${a.data}</span>
-          </div>
-          <p class="text-sm font-semibold text-slate-200">${a.titulo}</p>
-          <p class="text-xs text-slate-400 mt-1">${a.descricao}</p>
-        </div>
-      `).join('');
+      const mensagem = `*PEDIDO DE ORAÇÃO - REMIDOS*\n\n*Nome:* ${nome}\n*Telefone:* ${tel}\n*Pedido:* ${texto}`;
+      window.open(`https://api.whatsapp.com/send?phone=5500000000000&text=${encodeURIComponent(mensagem)}`, '_blank');
+      alert('Pedido enviado!');
+      document.getElementById('formOracao').reset();
     }
   </script>
 </body>
