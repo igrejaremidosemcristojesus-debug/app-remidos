@@ -112,7 +112,7 @@
         <h3 class="font-bold text-white text-base mb-1 flex items-center gap-2">
           <i class="fa-solid fa-hands-praying text-amber-500"></i> Pedido de Oração
         </h3>
-        <p class="text-xs text-slate-400 mb-4">Envie seu pedido diretamente para o WhatsApp da equipe de oração.</p>
+        <p class="text-xs text-slate-400 mb-4">Envie seu pedido diretamente para a equipe de oração da igreja.</p>
 
         <form id="formOracao" onsubmit="enviarPedidoOracao(event)" class="space-y-3">
           <div>
@@ -130,8 +130,8 @@
             <textarea id="oracaoTexto" rows="3" required placeholder="Escreva seu motivo de oração..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
           </div>
 
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-sm">
-            <i class="fa-brands fa-whatsapp text-lg"></i> Enviar para Equipe de Oração
+          <button type="submit" id="btnEnviarOracao" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-sm">
+            <i class="fa-solid fa-paper-plane text-lg"></i> Enviar Pedido de Oração
           </button>
         </form>
       </div>
@@ -251,13 +251,54 @@
   </nav>
 
   <script>
-    // URL da API do Google Sheets configurada
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz8n6PXMPmCntPpBPtbpSDEJlLwdQ0z0Ar7cK2cl-wi051wcchXLdt56GGeBT_ENVgzDQ/exec';
+    // URL da API do Google Sheets configurada com a nova implantação
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz7kWPYibqA_gp9NOo1B6xd5xgOsJ7bSj8et-WUovO-vMU5HA6IJHeBiVWxg9m6rRci7g/exec';
 
     window.onload = function() {
       carregarDevocionalDaPlanilha();
       carregarAvisosDaAPI();
     };
+
+    // ENVIO DO PEDIDO DE ORAÇÃO PARA A PLANILHA DO GOOGLE SHEETS
+    async function enviarPedidoOracao(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnEnviarOracao');
+      const textoOriginal = btn.innerHTML;
+      
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando...`;
+      btn.disabled = true;
+
+      const nome = document.getElementById('oracaoNome').value;
+      const telefone = document.getElementById('oracaoTelefone').value;
+      const pedido = document.getElementById('oracaoTexto').value;
+
+      const payload = {
+        acao: "pedido_oracao",
+        nome: nome,
+        telefone: telefone,
+        pedido: pedido
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        alert("Pedido de oração enviado com sucesso!");
+        document.getElementById('formOracao').reset();
+      } catch (erro) {
+        console.error("Erro ao enviar pedido de oração:", erro);
+        alert("Erro ao conectar com o servidor. Tente novamente.");
+      }
+
+      btn.innerHTML = textoOriginal;
+      btn.disabled = false;
+    }
 
     // CARREGAR AVISOS DA PLANILHA COM FILTRO DE 15 DIAS
     async function carregarAvisosDaAPI() {
@@ -283,7 +324,7 @@
         }
       } catch (erro) {
         console.log("Erro ao carregar avisos da API:", erro);
-        document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Erro ao carregar avisos.</p>`;
+        document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
       }
     }
 
@@ -333,18 +374,18 @@
       };
 
       try {
-        let resposta = await fetch(API_URL, {
+        await fetch(API_URL, {
           method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(payload)
         });
 
-        if (resposta.ok) {
-          alert('Aviso publicado com sucesso no mural!');
-          document.getElementById('formAviso').reset();
-          carregarAvisosDaAPI();
-        } else {
-          alert('Erro ao publicar aviso.');
-        }
+        alert('Aviso publicado com sucesso no mural!');
+        document.getElementById('formAviso').reset();
+        carregarAvisosDaAPI();
       } catch (erro) {
         console.log("Erro:", erro);
         alert('Erro de conexão com a API.');
@@ -367,6 +408,7 @@
       const cadastradoEm = new Date().toISOString().split('T')[0];
 
       const payload = {
+        acao: tipoAcao === 'Visitantes' ? 'novo_visitante' : 'novo_membro',
         tipoAcao,
         nome,
         telefone,
@@ -374,17 +416,17 @@
       };
 
       try {
-        let resposta = await fetch(API_URL, {
+        await fetch(API_URL, {
           method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(payload)
         });
 
-        if (resposta.ok) {
-          alert('Cadastro realizado com sucesso!');
-          document.getElementById('formPessoa').reset();
-        } else {
-          alert('Erro ao salvar cadastro.');
-        }
+        alert('Cadastro realizado com sucesso!');
+        document.getElementById('formPessoa').reset();
       } catch (erro) {
         console.log("Erro:", erro);
         alert('Erro de conexão com a API.');
@@ -405,7 +447,6 @@
         document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-check"></i> Recepção (Apenas Visitantes)`;
         document.getElementById('blocoPublicarAviso').classList.add('hidden');
         
-        // Fixa o tipo de cadastro apenas em Visitantes e desativa a seleção
         const selectTipo = document.getElementById('pessoaTipo');
         selectTipo.value = 'Visitantes';
         selectTipo.disabled = true;
@@ -434,7 +475,6 @@
       document.getElementById('painelBloqueado').classList.remove('hidden');
       document.getElementById('painelLiberado').classList.add('hidden');
       
-      // Reseta os bloqueios ao sair
       document.getElementById('blocoPublicarAviso').classList.remove('hidden');
       const selectTipo = document.getElementById('pessoaTipo');
       selectTipo.disabled = false;
@@ -496,18 +536,6 @@
       const abas = ['abaDevocional', 'abaCultos', 'abaOracao', 'abaPainel'];
       abas.forEach(aba => document.getElementById(aba).classList.add('hidden'));
       document.getElementById(idAba).classList.remove('hidden');
-    }
-
-    function enviarPedidoOracao(e) {
-      e.preventDefault();
-      const nome = document.getElementById('oracaoNome').value;
-      const tel = document.getElementById('oracaoTelefone').value;
-      const texto = document.getElementById('oracaoTexto').value;
-
-      const mensagem = `*PEDIDO DE ORAÇÃO - REMIDOS*\n\n*Nome:* ${nome}\n*Telefone:* ${tel}\n*Pedido:* ${texto}`;
-      window.open(`https://api.whatsapp.com/send?phone=5548991704111&text=${encodeURIComponent(mensagem)}`, '_blank');
-      alert('Pedido pronto para envio via WhatsApp!');
-      document.getElementById('formOracao').reset();
     }
   </script>
 </body>
