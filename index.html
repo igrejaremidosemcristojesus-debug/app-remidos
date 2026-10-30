@@ -3,601 +3,164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Igreja Evangélica Remidos em Cristo Jesus</title>
-
-  <!-- Configurações para PWA e Dispositivos Móveis -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f172a">
-
-  <!-- Configurações específicas para iOS / iPhone -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Remidos">
-  <link rel="apple-touch-icon" href="https://igrejaremidosemcristojesus-debug.github.io/app-remidos/logo.jpg">
-
+  <title>Igreja Remidos em Cristo Jesus - Painel PWA</title>
+  <!-- Tailwind CSS para Estilização -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Biblioteca para Geração de QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-20 font-sans">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-  <!-- TELA DE ABERTURA (FOTO 3 EM TELA CHEIA) -->
-  <div id="splashScreen" class="fixed inset-0 bg-slate-950 z-[100] flex items-center justify-center transition-opacity duration-500">
-    <img src="logo1.jpg" alt="Abertura Remidos" class="w-full h-full object-cover">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-6">
+    
+    <!-- Cabeçalho -->
+    <div class="text-center space-y-1">
+      <h1 class="text-2xl font-bold text-gray-800">Igreja Remidos</h1>
+      <p class="text-sm text-gray-500">Cadastro de Membros & Visitantes</p>
+    </div>
+
+    <!-- Abas de Navegação -->
+    <div class="flex border-b">
+      <button id="tabMembroBtn" onclick="mudarAba('membro')" class="w-1/2 py-2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none">
+        Membro
+      </button>
+      <button id="tabVisitanteBtn" onclick="mudarAba('visitante')" class="w-1/2 py-2 text-center font-semibold text-gray-500 border-b-2 border-transparent focus:outline-none">
+        Visitante
+      </button>
+    </div>
+
+    <!-- Formulário -->
+    <form id="cadastroForm" onsubmit="salvarCadastro(event)" class="space-y-4">
+      <input type="hidden" id="tipoCadastro" value="membro">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Nome Completo</label>
+        <input type="text" id="nome" required placeholder="Digite o nome" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">WhatsApp (com DDD)</label>
+        <input type="tel" id="telefone" required placeholder="48999999999" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+      <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
+        Cadastrar
+      </button>
+    </form>
+
+    <!-- Modal / Área de Validação do WhatsApp (QR Code) -->
+    <div id="areaQrCode" class="hidden text-center border-t pt-4 space-y-4">
+      <div class="bg-green-50 text-green-800 p-3 rounded-lg text-sm font-medium">
+        ✅ Cadastrado com sucesso!
+      </div>
+      
+      <p class="text-xs text-gray-600">
+        Aponte a câmera do celular do cadastrado para o QR Code abaixo para abrir a conversa no WhatsApp dele:
+      </p>
+
+      <!-- Div onde o QR Code é renderizado -->
+      <div id="qrcodeCanvas" class="flex justify-center my-2"></div>
+
+      <div class="space-y-2">
+        <a id="btnWaLink" href="#" target="_blank" class="block w-full bg-green-600 text-white font-bold py-2 rounded-lg shadow hover:bg-green-700 text-sm">
+          Abrir direto no WhatsApp
+        </a>
+        
+        <button onclick="reiniciarFormulario()" class="w-full bg-gray-200 text-gray-700 font-semibold py-2 rounded-lg text-sm hover:bg-gray-300">
+          Novo Cadastro
+        </button>
+      </div>
+    </div>
+
   </div>
 
-  <!-- CABEÇALHO SUPERIOR -->
-  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
-    <div class="max-w-md mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <img src="logo.jpg" alt="Logo" class="w-10 h-10 rounded-full border-2 border-amber-500 object-cover" onerror="this.src='https://via.placeholder.com/40'">
-        <div>
-          <h1 class="font-bold text-sm leading-tight text-amber-400">Remidos em Cristo</h1>
-          <p class="text-xs text-slate-400">Igreja Evangélica</p>
-        </div>
-      </div>
-      <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
-        <button id="btnPerfilMembro" onclick="setPerfil('membro')" class="px-2.5 py-1 text-xs font-semibold rounded bg-amber-500 text-slate-950 transition-all">
-          Membro
-        </button>
-        <button id="btnPerfilLider" onclick="setPerfil('lider')" class="px-2.5 py-1 text-xs font-semibold rounded text-slate-400 transition-all">
-          Liderança
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="max-w-md mx-auto p-4 space-y-6">
-
-    <!-- SEÇÃO 1: DEVOCIONAL DO DIA & MURAL DE AVISOS -->
-    <section id="abaDevocional" class="space-y-4">
-      
-      <!-- Card Devocional do Dia -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl"></div>
-        
-        <div class="flex items-center justify-between mb-3">
-          <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded-full border border-amber-500/30 flex items-center gap-1">
-            <i class="fa-solid fa-sun"></i> <span id="devocionalDiaBadge">Devocional de Hoje</span>
-          </span>
-          <span class="text-xs text-slate-400" id="devocionalDataBadge">Carregando...</span>
-        </div>
-
-        <h2 id="devocionalTitulo" class="text-lg font-bold text-white mb-1">Carregando da planilha...</h2>
-        <p id="devocionalVersiculo" class="text-xs font-semibold text-amber-400 italic mb-3">...</p>
-        
-        <p id="devocionalTexto" class="text-sm text-slate-300 leading-relaxed mb-4">
-          Aguarde enquanto lemos o devocional de hoje direto da planilha da igreja.
-        </p>
-
-        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-          <p class="text-xs font-semibold text-amber-400 mb-1"><i class="fa-solid fa-hands-praying"></i> Oração do Dia:</p>
-          <p id="devocionalOracao" class="text-xs text-slate-400 italic">...</p>
-        </div>
-      </div>
-
-      <!-- Mural de Avisos -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-white text-base flex items-center gap-2">
-            <i class="fa-solid fa-bullhorn text-amber-500"></i> Mural de Avisos
-          </h3>
-          <span class="text-xs text-slate-500">Programação</span>
-        </div>
-
-        <div id="listaAvisos" class="space-y-3">
-          <p class="text-slate-500 italic text-xs">Carregando avisos...</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SEÇÃO 2: CULTOS -->
-    <section id="abaCultos" class="space-y-4 hidden">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <h3 class="font-bold text-white text-base mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-church text-amber-500"></i> Nossos Cultos Semanais
-        </h3>
-        
-        <div class="space-y-3">
-          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
-            <div>
-              <span class="text-xs font-bold text-amber-400">Quarta-feira (20:00h)</span>
-              <h4 class="font-bold text-white text-sm">Culto Profético</h4>
-              <p class="text-xs text-slate-400">Esperamos por você.</p>
-            </div>
-            <i class="fa-solid fa-book-bible text-2xl text-slate-700"></i>
-          </div>
-
-          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between">
-            <div>
-              <span class="text-xs font-bold text-amber-400">Domingo (19:30h)</span>
-              <h4 class="font-bold text-white text-sm">Culto da Família e Celebração</h4>
-              <p class="text-xs text-slate-400">Venha Celebrar Conosco.</p>
-            </div>
-            <i class="fa-solid fa-people-roof text-2xl text-slate-700"></i>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SEÇÃO 3: ORAÇÃO -->
-    <section id="abaOracao" class="space-y-4 hidden">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <h3 class="font-bold text-white text-base mb-1 flex items-center gap-2">
-          <i class="fa-solid fa-hands-praying text-amber-500"></i> Pedido de Oração
-        </h3>
-        <p class="text-xs text-slate-400 mb-4">Envie seu pedido diretamente para a equipe de oração da igreja.</p>
-
-        <form id="formOracao" onsubmit="enviarPedidoOracao(event)" class="space-y-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Seu Nome</label>
-            <input type="text" id="oracaoNome" required placeholder="Digite seu nome" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Seu Telefone / WhatsApp</label>
-            <input type="tel" id="oracaoTelefone" required placeholder="5548999999999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Descreva seu Pedido</label>
-            <textarea id="oracaoTexto" rows="3" required placeholder="Escreva seu motivo de oração..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
-          </div>
-
-          <button type="submit" id="btnEnviarOracao" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-sm">
-            <i class="fa-solid fa-paper-plane text-lg"></i> Enviar Pedido de Oração
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- SEÇÃO 4: PAINEL DA LIDERANÇA -->
-    <section id="abaPainel" class="space-y-4 hidden">
-      <div id="painelBloqueado" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-center space-y-4">
-        <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-xl">
-          <i class="fa-solid fa-lock"></i>
-        </div>
-        <div>
-          <h3 class="text-base font-bold text-white">Área Restrita da Liderança</h3>
-          <p class="text-xs text-slate-400">Informe sua senha de acesso para gerenciar cadastros e avisos.</p>
-        </div>
-        <div class="space-y-2">
-          <input type="password" id="inputSenhaPainel" placeholder="Digite sua senha de acesso" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white text-center focus:outline-none focus:border-amber-500">
-          <button onclick="autenticarPainel()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition-all">
-            Entrar no Painel
-          </button>
-        </div>
-      </div>
-
-      <div id="painelLiberado" class="space-y-4 hidden">
-        <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between">
-          <span id="badgePerfilAdmin" class="text-xs text-amber-400 font-bold"><i class="fa-solid fa-user-shield"></i> Admin Master</span>
-          <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
-        </div>
-
-        <!-- Bloco 1: Ficha de Cadastro (Membros / Visitantes) -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-          <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
-            <i class="fa-solid fa-user-plus text-amber-500"></i> Ficha de Cadastro
-          </h3>
-          <p class="text-xs text-slate-400 mb-4">Salva diretamente na planilha do Google.</p>
-
-          <form id="formPessoa" onsubmit="salvarCadastroAutomatico(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Tipo de Cadastro</label>
-              <select id="pessoaTipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-                <option value="Membros">Membro Oficial</option>
-                <option value="Visitantes">Visitante</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Nome Completo</label>
-              <input type="text" id="pessoaNome" required placeholder="Digite o nome completo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">WhatsApp / Telefone</label>
-              <input type="tel" id="pessoaTelefone" required placeholder="5548999999999" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <button type="submit" id="btnSalvarPessoa" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
-              Salvar Cadastro Automaticamente
-            </button>
-          </form>
-        </div>
-
-        <!-- Bloco 2: Gestão do Mural de Avisos -->
-        <div id="blocoPublicarAviso" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-          <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
-            <i class="fa-solid fa-bullhorn text-amber-500"></i> Publicar no Mural de Avisos
-          </h3>
-          <p class="text-xs text-slate-400 mb-4">Publica no mural em tempo real para todos.</p>
-
-          <form id="formAviso" onsubmit="publicarAvisoAutomatico(event)" class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Categoria / Tipo</label>
-              <input type="text" id="avisoTipo" required placeholder="Ex: Vigília, Culto Especial" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Título do Aviso</label>
-              <input type="text" id="avisoTitulo" required placeholder="Ex: Grande Vigília de Oração" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Data / Horário Exibição</label>
-              <input type="text" id="avisoData" required placeholder="Ex: Sexta-feira • 23:00h" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1">Descrição / Detalhes</label>
-              <textarea id="avisoDescricao" rows="2" required placeholder="Escreva os detalhes..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
-            </div>
-            <button type="submit" id="btnSalvarAviso" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all">
-              Publicar no Mural Agora
-            </button>
-          </form>
-        </div>
-
-      </div>
-    </section>
-
-  </main>
-
-  <!-- BARRA DE NAVEGAÇÃO -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-50">
-    <div class="max-w-md mx-auto flex justify-around p-2">
-      <button id="navDevocional" onclick="mudarAba('abaDevocional')" class="flex flex-col items-center py-1 px-3 text-amber-500 font-bold text-xs">
-        <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
-        <span>Devocional</span>
-      </button>
-
-      <button id="navCultos" onclick="mudarAba('abaCultos')" class="flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs">
-        <i class="fa-solid fa-church text-lg mb-0.5"></i>
-        <span>Cultos</span>
-      </button>
-
-      <button id="navOracao" onclick="mudarAba('abaOracao')" class="flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs">
-        <i class="fa-solid fa-hands-praying text-lg mb-0.5"></i>
-        <span>Oração</span>
-      </button>
-
-      <button id="navPainel" onclick="mudarAba('abaPainel')" class="flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs">
-        <i class="fa-solid fa-user-lock text-lg mb-0.5"></i>
-        <span>Painel</span>
-      </button>
-    </div>
-  </nav>
-
   <script>
-    // URL da API do Google Sheets
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7kWPYibqA_gp9NOo1B6xd5xgOsJ7bSj8et-WUovO-vMU5HA6IJHeBiVWxg9m6rRci7g/exec';
+    // CONFIGURAÇÃO DO SEU APLICATIVO
+    const WEB_APP_URL = "SUA_WEB_APP_URL_DO_APPS_SCRIPT_AQUI"; // Cole a URL do Web App gerada no Apps Script
+    const NUMERO_WHATSAPP_IGREJA = "551329194833619425"; // Insira o número oficial com 55 + DDD
 
-    window.onload = function() {
-      carregarDevocionalDaPlanilha();
-      carregarAvisosDaAPI();
+    function mudarAba(tipo) {
+      document.getElementById('tipoCadastro').value = tipo;
+      const mBtn = document.getElementById('tabMembroBtn');
+      const vBtn = document.getElementById('tabVisitanteBtn');
 
-      // Esconde a Tela de Abertura (Splash Screen) após 1 segundo
-      setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        if (splash) {
-          splash.classList.add('opacity-0', 'pointer-events-none');
-          setTimeout(() => splash.remove(), 500);
-        }
-      }, 1000);
-    };
-
-    // Registo do Service Worker para PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker registrado com sucesso!'))
-          .catch(err => console.log('Falha ao registrar Service Worker:', err));
-      });
-    }
-
-    // ALTERAÇÃO DE ABAS DA BARRA DE NAVEGAÇÃO
-    function mudarAba(idAba) {
-      const abas = ['abaDevocional', 'abaCultos', 'abaOracao', 'abaPainel'];
-      abas.forEach(aba => {
-        const el = document.getElementById(aba);
-        if (el) el.classList.add('hidden');
-      });
-
-      const abaAtiva = document.getElementById(idAba);
-      if (abaAtiva) abaAtiva.classList.remove('hidden');
-
-      const mapeamentoBotoes = {
-        'abaDevocional': 'navDevocional',
-        'abaCultos': 'navCultos',
-        'abaOracao': 'navOracao',
-        'abaPainel': 'navPainel'
-      };
-
-      Object.values(mapeamentoBotoes).forEach(btnId => {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-          btn.className = "flex flex-col items-center py-1 px-3 text-slate-400 font-bold text-xs";
-        }
-      });
-
-      const btnAtivo = document.getElementById(mapeamentoBotoes[idAba]);
-      if (btnAtivo) {
-        btnAtivo.className = "flex flex-col items-center py-1 px-3 text-amber-500 font-bold text-xs";
-      }
-    }
-
-    // ENVIO DO PEDIDO DE ORAÇÃO PARA A PLANILHA DO GOOGLE SHEETS
-    async function enviarPedidoOracao(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnEnviarOracao');
-      const textoOriginal = btn.innerHTML;
-      
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando...`;
-      btn.disabled = true;
-
-      const nome = document.getElementById('oracaoNome').value.trim();
-      const telefone = document.getElementById('oracaoTelefone').value.trim();
-      const pedido = document.getElementById('oracaoTexto').value.trim();
-
-      if (!telefone) {
-        alert("Por favor, preencha o número de telefone/WhatsApp.");
-        btn.innerHTML = textoOriginal;
-        btn.disabled = false;
-        return;
-      }
-
-      const payload = {
-        acao: "pedido_oracao",
-        nome: nome,
-        telefone: telefone,
-        pedido: pedido
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        });
-
-        alert("Pedido de oração enviado com sucesso!");
-        document.getElementById('formOracao').reset();
-      } catch (erro) {
-        console.error("Erro ao enviar pedido de oração:", erro);
-        alert("Erro ao conectar com o servidor. Tente novamente.");
-      }
-
-      btn.innerHTML = textoOriginal;
-      btn.disabled = false;
-    }
-
-    // CARREGAR AVISOS DA PLANILHA COM FILTRO DE 15 DIAS
-    async function carregarAvisosDaAPI() {
-      try {
-        let resposta = await fetch(API_URL + '?action=Avisos');
-        if (resposta.ok) {
-          let avisos = await resposta.json();
-          
-          const hoje = new Date();
-          const limiteDias = 15;
-
-          let avisosValidos = avisos.filter(a => {
-            if (!a.criadoEm) return true;
-            const dataCriacao = new Date(a.criadoEm);
-            const diferencaTempo = Math.abs(hoje - dataCriacao);
-            const diferencaDias = Math.ceil(diferencaTempo / (1000 * 60 * 60 * 24));
-            return diferencaDias <= limiteDias;
-          });
-
-          renderizarAvisos(avisosValidos);
-        } else {
-          document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
-        }
-      } catch (erro) {
-        console.log("Erro ao carregar avisos da API:", erro);
-        document.getElementById('listaAvisos').innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso no momento.</p>`;
-      }
-    }
-
-    function renderizarAvisos(lista) {
-      const el = document.getElementById('listaAvisos');
-      if (!lista || lista.length === 0) {
-        el.innerHTML = `<p class="text-slate-500 italic text-xs">Nenhum aviso publicado recentemente.</p>`;
-        return;
-      }
-      el.innerHTML = lista.map(a => `
-        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-          <div class="flex justify-between items-start mb-1">
-            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">${a.tipo || 'Aviso'}</span>
-            <span class="text-[10px] text-slate-500">${a.data || ''}</span>
-          </div>
-          <p class="text-sm font-semibold text-slate-200">${a.titulo || ''}</p>
-          <p class="text-xs text-slate-400 mt-1">${a.descricao || ''}</p>
-        </div>
-      `).join('');
-    }
-
-    // PUBLICAR AVISO AUTOMATICAMENTE NA PLANILHA
-    async function publicarAvisoAutomatico(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSalvarAviso');
-      btn.innerText = "Publicando...";
-      btn.disabled = true;
-
-      const tipo = document.getElementById('avisoTipo').value;
-      const titulo = document.getElementById('avisoTitulo').value;
-      const data = document.getElementById('avisoData').value;
-      const descricao = document.getElementById('avisoDescricao').value;
-
-      const hoje = new Date();
-      const ano = hoje.getFullYear();
-      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-      const dia = String(hoje.getDate()).padStart(2, '0');
-      const criadoEm = `${ano}-${mes}-${dia}`;
-
-      const payload = {
-        tipoAcao: 'Avisos',
-        tipo,
-        titulo,
-        data,
-        descricao,
-        criadoEm
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        alert('Aviso publicado com sucesso no mural!');
-        document.getElementById('formAviso').reset();
-        carregarAvisosDaAPI();
-      } catch (erro) {
-        console.log("Erro:", erro);
-        alert('Erro de conexão com a API.');
-      }
-
-      btn.innerText = "Publicar no Mural Agora";
-      btn.disabled = false;
-    }
-
-    // SALVAR CADASTRO AUTOMATICAMENTE NA PLANILHA
-    async function salvarCadastroAutomatico(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSalvarPessoa');
-      btn.innerText = "Salvando...";
-      btn.disabled = true;
-
-      const tipoAcao = document.getElementById('pessoaTipo').value; 
-      const nome = document.getElementById('pessoaNome').value;
-      const telefone = document.getElementById('pessoaTelefone').value;
-      const cadastradoEm = new Date().toISOString().split('T')[0];
-
-      const payload = {
-        acao: tipoAcao === 'Visitantes' ? 'novo_visitante' : 'novo_membro',
-        tipoAcao,
-        nome,
-        telefone,
-        cadastradoEm
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        alert('Cadastro realizado com sucesso!');
-        document.getElementById('formPessoa').reset();
-      } catch (erro) {
-        console.log("Erro:", erro);
-        alert('Erro de conexão com a API.');
-      }
-
-      btn.innerText = "Salvar Cadastro Automaticamente";
-      btn.disabled = false;
-    }
-
-    // AUTENTICAÇÃO COM DOIS NÍVEIS DE SENHA
-    function autenticarPainel() {
-      const senhaInput = document.getElementById('inputSenhaPainel').value;
-      
-      if (senhaInput === '23061929') { 
-        document.getElementById('painelBloqueado').classList.add('hidden');
-        document.getElementById('painelLiberado').classList.remove('hidden');
-        
-        document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-check"></i> Recepção (Apenas Visitantes)`;
-        document.getElementById('blocoPublicarAviso').classList.add('hidden');
-        
-        const selectTipo = document.getElementById('pessoaTipo');
-        selectTipo.value = 'Visitantes';
-        selectTipo.disabled = true;
-        
-        alert('Acesso da Recepção liberado (Cadastro de Visitantes).');
-      } 
-      else if (senhaInput === '23069912') { 
-        document.getElementById('painelBloqueado').classList.add('hidden');
-        document.getElementById('painelLiberado').classList.remove('hidden');
-        
-        document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin Master (Acesso Total)`;
-        document.getElementById('blocoPublicarAviso').classList.remove('hidden');
-        
-        const selectTipo = document.getElementById('pessoaTipo');
-        selectTipo.disabled = false;
-        
-        alert('Acesso Master liberado.');
-      } 
-      else {
-        alert('Senha incorreta!');
-      }
-    }
-
-    function sairPainel() {
-      document.getElementById('inputSenhaPainel').value = '';
-      document.getElementById('painelBloqueado').classList.remove('hidden');
-      document.getElementById('painelLiberado').classList.add('hidden');
-      
-      document.getElementById('blocoPublicarAviso').classList.remove('hidden');
-      const selectTipo = document.getElementById('pessoaTipo');
-      selectTipo.disabled = false;
-      selectTipo.value = 'Membros';
-    }
-
-    async function carregarDevocionalDaPlanilha() {
-      try {
-        let resposta = await fetch('devocionais-365.xlsx');
-        let dadosBuffer = await resposta.arrayBuffer();
-        let workbook = XLSX.read(dadosBuffer, { type: 'array' });
-        
-        let nomePrimeiraAba = workbook.SheetNames[0];
-        let worksheet = workbook.Sheets[nomePrimeiraAba];
-        let listaDevocionais = XLSX.utils.sheet_to_json(worksheet);
-
-        let hoje = new Date();
-        let diaStr = String(hoje.getDate()).padStart(2, '0');
-        let mesStr = String(hoje.getMonth() + 1).padStart(2, '0');
-        let dataHojeFormatada = `${diaStr}/${mesStr}`;
-
-        let devocionalHoje = listaDevocionais.find(d => String(d.Data).trim() === dataHojeFormatada);
-
-        if (!devocionalHoje && listaDevocionais.length > 0) {
-          let diaDoAno = Math.floor((hoje - new Date(hoje.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-          let indice = (diaDoAno - 1) % listaDevocionais.length;
-          devocionalHoje = listaDevocionais[indice];
-        }
-
-        if (devocionalHoje) {
-          document.getElementById('devocionalDiaBadge').innerText = `Devocional – Dia ${devocionalHoje.Dia || 'Hoje'}`;
-          document.getElementById('devocionalDataBadge').innerText = devocionalHoje.Data ? `Hoje, ${devocionalHoje.Data}` : 'Hoje, 07:00h';
-          document.getElementById('devocionalTitulo').innerText = devocionalHoje.Tema || devocionalHoje.Título || 'Palavra do Dia';
-          document.getElementById('devocionalVersiculo').innerText = devocionalHoje['Referência bíblica'] || devocionalHoje.Versículo || '';
-          document.getElementById('devocionalTexto').innerText = devocionalHoje.Reflexão || devocionalHoje.Texto || '';
-          document.getElementById('devocionalOracao').innerText = devocionalHoje.Oração || '';
-        }
-      } catch (erro) {
-        console.log("Erro ao carregar planilha:", erro);
-      }
-    }
-
-    function setPerfil(perfil) {
-      const btnMembro = document.getElementById('btnPerfilMembro');
-      const btnLider = document.getElementById('btnPerfilLider');
-
-      if (perfil === 'membro') {
-        btnMembro.className = "px-2.5 py-1 text-xs font-semibold rounded bg-amber-500 text-slate-950 transition-all";
-        btnLider.className = "px-2.5 py-1 text-xs font-semibold rounded text-slate-400 transition-all";
-        mudarAba('abaDevocional');
+      if (tipo === 'membro') {
+        mBtn.className = "w-1/2 py-2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none";
+        vBtn.className = "w-1/2 py-2 text-center font-semibold text-gray-500 border-b-2 border-transparent focus:outline-none";
       } else {
-        btnLider.className = "px-2.5 py-1 text-xs font-semibold rounded bg-amber-500 text-slate-950 transition-all";
-        btnMembro.className = "px-2.5 py-1 text-xs font-semibold rounded text-slate-400 transition-all";
-        mudarAba('abaPainel');
+        vBtn.className = "w-1/2 py-2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none";
+        mBtn.className = "w-1/2 py-2 text-center font-semibold text-gray-500 border-b-2 border-transparent focus:outline-none";
       }
+    }
+
+    async function salvarCadastro(event) {
+      event.preventDefault();
+      
+      const btn = document.getElementById('btnSalvar');
+      btn.disabled = true;
+      btn.innerText = "Cadastrando...";
+
+      const tipo = document.getElementById('tipoCadastro').value;
+      const nome = document.getElementById('nome').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
+
+      const dados = {
+        tipo: tipo,
+        nome: nome,
+        telefone: telefone
+      };
+
+      try {
+        // Envio para a planilha via Apps Script
+        if (WEB_APP_URL && !WEB_APP_URL.includes("SUA_WEB_APP_URL")) {
+          await fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+          });
+        }
+
+        gerarQrCodeEAtivarJanela(nome, tipo);
+
+      } catch (erro) {
+        alert("Erro ao conectar com o servidor. Verifique a URL do Apps Script.");
+        btn.disabled = false;
+        btn.innerText = "Cadastrar";
+      }
+    }
+
+    function gerarQrCodeEAtivarJanela(nome, tipo) {
+      document.getElementById('cadastroForm').classList.add('hidden');
+      document.getElementById('areaQrCode').classList.remove('hidden');
+
+      const textoMensagem = encodeURIComponent(`Olá! Sou ${nome} e gostaria de receber os devocionais e avisos da Igreja Remidos.`);
+      const linkWa = `https://wa.me/${NUMERO_WHATSAPP_IGREJA}?text=${textoMensagem}`;
+
+      // Atualiza link do botão
+      document.getElementById('btnWaLink').href = linkWa;
+
+      // Limpa QR code anterior e gera novo
+      const containerQr = document.getElementById('qrcodeCanvas');
+      containerQr.innerHTML = "";
+      
+      new QRCode(containerQr, {
+        text: linkWa,
+        width: 160,
+        height: 160,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+    }
+
+    function reiniciarFormulario() {
+      document.getElementById('nome').value = "";
+      document.getElementById('telefone').value = "";
+      document.getElementById('btnSalvar').disabled = false;
+      document.getElementById('btnSalvar').innerText = "Cadastrar";
+      document.getElementById('cadastroForm').classList.remove('hidden');
+      document.getElementById('areaQrCode').classList.add('hidden');
     }
   </script>
 </body>
