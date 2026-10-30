@@ -1,0 +1,20 @@
+{
+  "short_name": "Remidos",
+  "name": "Igreja Remidos em Cristo Jesus",
+  "icons": [
+    {
+      "src": "https://igrejaremidosemcristojesus-debug.github.io/app-remidos/logo.jpg",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://igrejaremidosemcristojesus-debug.github.io/app-remidos/logo.jpg",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "display": "standalone"
+}
