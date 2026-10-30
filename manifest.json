@@ -3,12 +3,12 @@
   "name": "Igreja Remidos em Cristo Jesus",
   "icons": [
     {
-      "src": "https://igrejaremidosemcristojesus-debug.github.io/app-remidos/logo.jpg",
+      "src": "https://github.com/igrejaremidosemcristojesus-debug/app-remidos/blob/main/logo.jpg",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "https://igrejaremidosemcristojesus-debug.github.io/app-remidos/logo.jpg",
+      "src": "https://github.com/igrejaremidosemcristojesus-debug/app-remidos/blob/main/logo.jpg",
       "type": "image/png",
       "sizes": "512x512"
     }
