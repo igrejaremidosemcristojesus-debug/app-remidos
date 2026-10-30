@@ -178,7 +178,7 @@
           <button onclick="sairPainel()" class="text-xs text-slate-400 hover:text-white underline">Sair</button>
         </div>
 
-        <!-- Bloco 1: Ficha de Cadastro (Membros / Visitantes) -->
+        <!-- Bloco 1: Ficha de Cadastro (Membros / Visitantes) - DENTRO DESTA MESMA ABA -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
           <h3 class="font-bold text-white text-sm mb-1 flex items-center gap-2">
             <i class="fa-solid fa-user-plus text-amber-500"></i> Ficha de Cadastro
@@ -206,13 +206,13 @@
             </button>
           </form>
 
-          <!-- ÁREA DO QR CODE / VALIDAÇÃO DO WHATSAPP -->
+          <!-- ÁREA DO QR CODE / BOTÃO WHATSAPP DENTRO DA FICHA DE CADASTRO -->
           <div id="areaQrCode" class="hidden text-center border-t border-slate-800 pt-4 mt-4 space-y-3">
             <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-2.5 rounded-xl text-xs font-bold">
               <i class="fa-solid fa-circle-check"></i> Salvo na planilha com sucesso!
             </div>
             <p class="text-xs text-slate-300">
-              Aponte a câmera do celular da pessoa para o QR Code para enviar a primeira mensagem e liberar o recebimento:
+              Aponte a câmera para o QR Code ou clique no botão abaixo para abrir o WhatsApp da pessoa:
             </p>
             <div id="qrcodeCanvas" class="flex justify-center p-3 bg-white rounded-xl w-fit mx-auto"></div>
             <div class="space-y-2">
@@ -295,7 +295,6 @@
       carregarDevocionalDaPlanilha();
       carregarAvisosDaAPI();
 
-      // Esconde a Tela de Abertura (Splash Screen) após 1 segundo
       setTimeout(() => {
         const splash = document.getElementById('splashScreen');
         if (splash) {
@@ -305,7 +304,6 @@
       }, 1000);
     };
 
-    // Registo do Service Worker para PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -314,7 +312,6 @@
       });
     }
 
-    // ALTERAÇÃO DE ABAS DA BARRA DE NAVEGAÇÃO
     function mudarAba(idAba) {
       const abas = ['abaDevocional', 'abaCultos', 'abaOracao', 'abaPainel'];
       abas.forEach(aba => {
@@ -345,7 +342,6 @@
       }
     }
 
-    // ENVIO DO PEDIDO DE ORAÇÃO PARA A PLANILHA DO GOOGLE SHEETS
     async function enviarPedidoOracao(e) {
       e.preventDefault();
       const btn = document.getElementById('btnEnviarOracao');
@@ -375,9 +371,7 @@
       try {
         await fetch(API_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
 
@@ -392,13 +386,11 @@
       btn.disabled = false;
     }
 
-    // CARREGAR AVISOS DA PLANILHA COM FILTRO DE 15 DIAS
     async function carregarAvisosDaAPI() {
       try {
         let resposta = await fetch(API_URL + '?action=Avisos');
         if (resposta.ok) {
           let avisos = await resposta.json();
-          
           const hoje = new Date();
           const limiteDias = 15;
 
@@ -438,7 +430,6 @@
       `).join('');
     }
 
-    // PUBLICAR AVISO AUTOMATICAMENTE NA PLANILHA
     async function publicarAvisoAutomatico(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSalvarAviso');
@@ -468,9 +459,7 @@
       try {
         await fetch(API_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
 
@@ -486,7 +475,6 @@
       btn.disabled = false;
     }
 
-    // SALVAR CADASTRO AUTOMATICAMENTE NA PLANILHA & GERAR QR CODE
     async function salvarCadastroAutomatico(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSalvarPessoa');
@@ -509,13 +497,11 @@
       try {
         await fetch(API_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
 
-        // Gera o QR Code e exibe as opções de WhatsApp
+        // Mostra o QR Code e o botão de WhatsApp exatamente DENTRO da ficha de cadastro
         exibirQrCodeOptIn(nome);
 
       } catch (erro) {
@@ -538,14 +524,19 @@
       const containerQr = document.getElementById('qrcodeCanvas');
       containerQr.innerHTML = "";
 
-      new QRCode(containerQr, {
-        text: linkWa,
-        width: 150,
-        height: 150,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-      });
+      // Garante a geração do QR Code via biblioteca
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(containerQr, {
+          text: linkWa,
+          width: 150,
+          height: 150,
+          colorDark : "#000000",
+          colorLight : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+      } else {
+        containerQr.innerHTML = "<p class='text-xs text-red-500'>Erro ao carregar gerador de QR Code.</p>";
+      }
     }
 
     function reiniciarFormularioCadastro() {
@@ -556,33 +547,28 @@
       document.getElementById('areaQrCode').classList.add('hidden');
     }
 
-    // AUTENTICAÇÃO COM DOIS NÍVEIS DE SENHA
     function autenticarPainel() {
       const senhaInput = document.getElementById('inputSenhaPainel').value;
       
       if (senhaInput === '23061929') { 
         document.getElementById('painelBloqueado').classList.add('hidden');
         document.getElementById('painelLiberado').classList.remove('hidden');
-        
         document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-check"></i> Recepção (Apenas Visitantes)`;
         document.getElementById('blocoPublicarAviso').classList.add('hidden');
         
         const selectTipo = document.getElementById('pessoaTipo');
         selectTipo.value = 'Visitantes';
         selectTipo.disabled = true;
-        
         alert('Acesso da Recepção liberado (Cadastro de Visitantes).');
       } 
       else if (senhaInput === '23069912') { 
         document.getElementById('painelBloqueado').classList.add('hidden');
         document.getElementById('painelLiberado').classList.remove('hidden');
-        
         document.getElementById('badgePerfilAdmin').innerHTML = `<i class="fa-solid fa-user-shield"></i> Admin Master (Acesso Total)`;
         document.getElementById('blocoPublicarAviso').classList.remove('hidden');
         
         const selectTipo = document.getElementById('pessoaTipo');
         selectTipo.disabled = false;
-        
         alert('Acesso Master liberado.');
       } 
       else {
@@ -594,7 +580,6 @@
       document.getElementById('inputSenhaPainel').value = '';
       document.getElementById('painelBloqueado').classList.remove('hidden');
       document.getElementById('painelLiberado').classList.add('hidden');
-      
       document.getElementById('blocoPublicarAviso').classList.remove('hidden');
       const selectTipo = document.getElementById('pessoaTipo');
       selectTipo.disabled = false;
