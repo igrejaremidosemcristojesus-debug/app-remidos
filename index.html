@@ -4,10 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Igreja Evangélica Remidos em Cristo Jesus</title>
+
+  <!-- Configurações para PWA e Dispositivos Móveis -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- Configurações específicas para iOS / iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Remidos">
+  <link rel="apple-touch-icon" href="https://igrejaremidosemcristojesus-debug.github.io/app-remidos/logo.jpg">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link rel="manifest" href="data:application/json,{%22name%22:%22Remidos%20em%20Cristo%22,%22short_name%22:%22Remidos%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22#0f172a%22,%22theme_color%22:%22#0f172a%22}">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-20 font-sans">
 
@@ -258,6 +268,15 @@
       carregarDevocionalDaPlanilha();
       carregarAvisosDaAPI();
     };
+
+    // Registo do Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registrado com sucesso!'))
+          .catch(err => console.log('Falha ao registrar Service Worker:', err));
+      });
+    }
 
     // ALTERAÇÃO DE ABAS DA BARRA DE NAVEGAÇÃO
     function mudarAba(idAba) {
