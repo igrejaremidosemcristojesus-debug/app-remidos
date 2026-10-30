@@ -1,164 +1,294 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Igreja Remidos em Cristo Jesus - Painel PWA</title>
-  <!-- Tailwind CSS para Estilização -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Biblioteca para Geração de QR Code -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-</head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+// ==========================================
+// CONFIGURAÇÕES GERAIS E META API
+// ==========================================
+const PHONE_NUMBER_ID = '1329194833619425';
+const WHATSAPP_TOKEN = 'EAAWZCL9Dtx1wBS0EKdsU9ODNZAiBhMZB5hTrcSqLe36qvvQTEExYuccSfQ2IhQMZASNmFPQyvxJSorUZBeh4D2H6QySiZCW70sTeBF5NtJypsSIBZAFrBZC8Nv41fWS554bXmYTJqDiaaNeQZCc93AksfIXhkwxRzp6VagbjjnhKBMU9Py9RfrS97njSNcflf3AZDZD';
+const ID_DA_PLANILHA = '1WvxXQirdMBkO30P4THk2LJnerNZ9xh7lxDjBcGvG07M';
 
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-6">
-    
-    <!-- Cabeçalho -->
-    <div class="text-center space-y-1">
-      <h1 class="text-2xl font-bold text-gray-800">Igreja Remidos</h1>
-      <p class="text-sm text-gray-500">Cadastro de Membros & Visitantes</p>
-    </div>
+// ==========================================
+// 1. FUNÇÃO DE ENVIO DE TEMPLATE - DEVOCIONAL
+// ==========================================
+function enviarTemplateWhatsApp(numeroDestinatario, tema, referencia, reflexao, oracao) {
+  if (!numeroDestinatario || String(numeroDestinatario).trim() === "" || numeroDestinatario === "undefined") {
+    return null;
+  }
 
-    <!-- Abas de Navegação -->
-    <div class="flex border-b">
-      <button id="tabMembroBtn" onclick="mudarAba('membro')" class="w-1/2 py-2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none">
-        Membro
-      </button>
-      <button id="tabVisitanteBtn" onclick="mudarAba('visitante')" class="w-1/2 py-2 text-center font-semibold text-gray-500 border-b-2 border-transparent focus:outline-none">
-        Visitante
-      </button>
-    </div>
+  let numeroLimpo = String(numeroDestinatario).replace(/\D/g, '');
+  if (numeroLimpo.length < 8) return null;
 
-    <!-- Formulário -->
-    <form id="cadastroForm" onsubmit="salvarCadastro(event)" class="space-y-4">
-      <input type="hidden" id="tipoCadastro" value="membro">
+  if (numeroLimpo.length === 10 || numeroLimpo.length === 11) {
+    numeroLimpo = '55' + numeroLimpo;
+  }
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Nome Completo</label>
-        <input type="text" id="nome" required placeholder="Digite o nome" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">WhatsApp (com DDD)</label>
-        <input type="tel" id="telefone" required placeholder="48999999999" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
-      </div>
-
-      <button type="submit" id="btnSalvar" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
-        Cadastrar
-      </button>
-    </form>
-
-    <!-- Modal / Área de Validação do WhatsApp (QR Code) -->
-    <div id="areaQrCode" class="hidden text-center border-t pt-4 space-y-4">
-      <div class="bg-green-50 text-green-800 p-3 rounded-lg text-sm font-medium">
-        ✅ Cadastrado com sucesso!
-      </div>
-      
-      <p class="text-xs text-gray-600">
-        Aponte a câmera do celular do cadastrado para o QR Code abaixo para abrir a conversa no WhatsApp dele:
-      </p>
-
-      <!-- Div onde o QR Code é renderizado -->
-      <div id="qrcodeCanvas" class="flex justify-center my-2"></div>
-
-      <div class="space-y-2">
-        <a id="btnWaLink" href="#" target="_blank" class="block w-full bg-green-600 text-white font-bold py-2 rounded-lg shadow hover:bg-green-700 text-sm">
-          Abrir direto no WhatsApp
-        </a>
-        
-        <button onclick="reiniciarFormulario()" class="w-full bg-gray-200 text-gray-700 font-semibold py-2 rounded-lg text-sm hover:bg-gray-300">
-          Novo Cadastro
-        </button>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    // CONFIGURAÇÕES VINCULADAS COM O SEU SISTEMA
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwm0tvqHCqlJe9cqVBVebGbjosVNbet3s3EyynpOzve9vZR389iPBnM2SiYcyBImr1sag/exec";
-    const NUMERO_WHATSAPP_IGREJA = "5548991704111";
-
-    function mudarAba(tipo) {
-      document.getElementById('tipoCadastro').value = tipo;
-      const mBtn = document.getElementById('tabMembroBtn');
-      const vBtn = document.getElementById('tabVisitanteBtn');
-
-      if (tipo === 'membro') {
-        mBtn.className = "w-1/2 py-2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none";
-        vBtn.className = "w-1/2 py-2 text-center font-semibold text-gray-500 border-b-2 border-transparent focus:outline-none";
-      } else {
-        vBtn.className = "w-1/2 py-2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 focus:outline-none";
-        mBtn.className = "w-1/2 py-2 text-center font-semibold text-gray-500 border-b-2 border-transparent focus:outline-none";
-      }
+  const url = `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`;
+  
+  const payload = {
+    "messaging_product": "whatsapp",
+    "to": numeroLimpo,
+    "type": "template",
+    "template": {
+      "name": "devocional_diario", // Modelo aprovado na Meta
+      "language": {
+        "code": "pt_BR"
+      },
+      "components": [
+        {
+          "type": "body",
+          "parameters": [
+            { "type": "text", "text": String(tema || "") },
+            { "type": "text", "text": String(referencia || "") },
+            { "type": "text", "text": String(reflexao || "") },
+            { "type": "text", "text": String(oracao || "") }
+          ]
+        }
+      ]
     }
+  };
 
-    async function salvarCadastro(event) {
-      event.preventDefault();
-      
-      const btn = document.getElementById('btnSalvar');
-      btn.disabled = true;
-      btn.innerText = "Cadastrando...";
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "headers": { "Authorization": "Bearer " + WHATSAPP_TOKEN },
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
 
-      const tipo = document.getElementById('tipoCadastro').value;
-      const nome = document.getElementById('nome').value.trim();
-      const telefone = document.getElementById('telefone').value.trim();
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    const json = JSON.parse(response.getContentText());
+    Logger.log(`✅ Devocional completo enviado para ${numeroLimpo}`);
+    return json;
+  } catch (erro) {
+    Logger.log(`❌ Erro no envio do template: ` + erro.toString());
+    return null;
+  }
+}
 
-      const dados = {
-        tipo: tipo,
-        nome: nome,
-        telefone: telefone
+// ==========================================
+// 2. DISPARAR DEVOCIONAL DIÁRIO (Acionador Diário)
+// ==========================================
+function enviarDevocionalDiario() {
+  const ss = SpreadsheetApp.openById(ID_DA_PLANILHA);
+  
+  const folhas = ss.getSheets();
+  let abaDevocionais = null;
+  let abaMembros = null;
+
+  for (let f of folhas) {
+    let nome = f.getName().trim().toLowerCase();
+    if (nome === "devocionais") abaDevocionais = f;
+    if (nome === "membros") abaMembros = f;
+  }
+
+  if (!abaDevocionais || !abaMembros) {
+    Logger.log("❌ Erro: Aba 'Devocionais' ou 'Membros' não encontrada.");
+    return;
+  }
+
+  const hoje = new Date();
+  const diaStr = String(hoje.getDate()).padStart(2, '0') + '/' + String(hoje.getMonth() + 1).padStart(2, '0');
+
+  const dadosDevocionais = abaDevocionais.getDataRange().getValues();
+  let devocionalHoje = null;
+
+  for (let i = 1; i < dadosDevocionais.length; i++) {
+    let dataLinha = String(dadosDevocionais[i][1]).trim();
+    if (dataLinha === diaStr || dataLinha.includes(diaStr)) {
+      devocionalHoje = {
+        tema: dadosDevocionais[i][2],       
+        referencia: dadosDevocionais[i][3],  
+        reflexao: dadosDevocionais[i][4],    
+        oracao: dadosDevocionais[i][5]       
       };
+      break;
+    }
+  }
 
-      try {
-        await fetch(WEB_APP_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dados)
-        });
+  if (!devocionalHoje) {
+    Logger.log(`⚠️ Nenhum devocional encontrado para a data de hoje (${diaStr}).`);
+    return;
+  }
 
-        gerarQrCodeEAtivarJanela(nome, tipo);
+  Logger.log(`📖 Devocional encontrado: ${devocionalHoje.tema}`);
 
-      } catch (erro) {
-        alert("Erro ao conectar com o servidor do Google Apps Script.");
-        btn.disabled = false;
-        btn.innerText = "Cadastrar";
+  const dadosMembros = abaMembros.getDataRange().getValues();
+  let total = 0;
+
+  for (let j = 1; j < dadosMembros.length; j++) {
+    let telefone = dadosMembros[j][2]; // Coluna C
+    if (telefone && String(telefone).trim() !== "") {
+      enviarTemplateWhatsApp(telefone, devocionalHoje.tema, devocionalHoje.referencia, devocionalHoje.reflexao, devocionalHoje.oracao);
+      total++;
+      Utilities.sleep(1000);
+    }
+  }
+
+  Logger.log(`🎉 Devocional Diário (${devocionalHoje.tema}) enviado via Template para ${total} membros.`);
+}
+
+// ==========================================
+// 3. FUNÇÃO DE ENVIO DO MURAL DE AVISOS / CULTOS
+// ==========================================
+function enviarAvisoWhatsApp(numeroDestinatario, categoria, titulo, dataHorario, detalhes) {
+  if (!numeroDestinatario || String(numeroDestinatario).trim() === "") return null;
+
+  let numeroLimpo = String(numeroDestinatario).replace(/\D/g, '');
+  if (numeroLimpo.length < 8) return null;
+  if (numeroLimpo.length === 10 || numeroLimpo.length === 11) {
+    numeroLimpo = '55' + numeroLimpo;
+  }
+
+  const url = `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`;
+  
+  const payload = {
+    "messaging_product": "whatsapp",
+    "to": numeroLimpo,
+    "type": "template",
+    "template": {
+      "name": "mural_de_avisos", // Modelo aprovado na Meta para avisos e cultos[cite: 8]
+      "language": { "code": "pt_BR" },
+      "components": [
+        {
+          "type": "body",
+          "parameters": [
+            { "type": "text", "text": String(categoria || "Aviso") },
+            { "type": "text", "text": String(titulo || "Igreja Remidos") },
+            { "type": "text", "text": String(dataHorario || "Hoje") },
+            { "type": "text", "text": String(detalhes || "Fique ligado em nossa programação.") }
+          ]
+        }
+      ]
+    }
+  };
+
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "headers": { "Authorization": "Bearer " + WHATSAPP_TOKEN },
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    return JSON.parse(response.getContentText());
+  } catch (erro) {
+    Logger.log(`❌ Erro no envio do aviso: ` + erro.toString());
+    return null;
+  }
+}
+
+// ==========================================
+// 4. FUNÇÃO DE BOAS-VINDAS A VISITANTES (ENVIO IMEDIATO)
+// ==========================================
+function verificarEEnviarVisitantes() {
+  const ss = SpreadsheetApp.openById(ID_DA_PLANILHA);
+  const abaVisitantes = ss.getSheetByName("Visitantes");
+  
+  if (!abaVisitantes) {
+    Logger.log("❌ Aba 'Visitantes' não encontrada.");
+    return;
+  }
+
+  const dados = abaVisitantes.getDataRange().getValues();
+
+  for (let i = 1; i < dados.length; i++) {
+    let nome = dados[i][0];       // Coluna A
+    let telefone = dados[i][1];   // Coluna B
+    let status = String(dados[i][3]).trim(); // Coluna D (Status)
+
+    if (telefone && status !== "Enviado") {
+      let enviado = enviarTemplateVisitante(telefone, nome);
+      if (enviado) {
+        abaVisitantes.getRange(i + 1, 4).setValue("Enviado"); // Marca como enviado na Coluna D
+        Logger.log(`✅ Boas-vindas enviada com sucesso para: ${nome}`);
+      } else {
+        Logger.log(`❌ Falha na API da Meta ao enviar para: ${nome}`);
       }
     }
+  }
+}
 
-    function gerarQrCodeEAtivarJanela(nome, tipo) {
-      document.getElementById('cadastroForm').classList.add('hidden');
-      document.getElementById('areaQrCode').classList.remove('hidden');
+function enviarTemplateVisitante(numeroDestinatario, nomeVisitante) {
+  if (!numeroDestinatario) return false;
 
-      const textoMensagem = encodeURIComponent(`Olá! Sou ${nome} e gostaria de receber os devocionais e avisos da Igreja Remidos.`);
-      const linkWa = `https://wa.me/${NUMERO_WHATSAPP_IGREJA}?text=${textoMensagem}`;
+  let numeroLimpo = String(numeroDestinatario).replace(/\D/g, '');
+  if (numeroLimpo.length < 8) return false;
+  if (numeroLimpo.length === 10 || numeroLimpo.length === 11) {
+    numeroLimpo = '55' + numeroLimpo;
+  }
 
-      // Atualiza o link do botão para clique direto
-      document.getElementById('btnWaLink').href = linkWa;
-
-      // Limpa QR code anterior e gera o novo
-      const containerQr = document.getElementById('qrcodeCanvas');
-      containerQr.innerHTML = "";
-      
-      new QRCode(containerQr, {
-        text: linkWa,
-        width: 160,
-        height: 160,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-      });
+  const url = `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`;
+  
+  const payload = {
+    "messaging_product": "whatsapp",
+    "to": numeroLimpo,
+    "type": "template",
+    "template": {
+      "name": "boas_vindas_visitantes", // Nome exato aprovado na Meta[cite: 8]
+      "language": { "code": "pt_BR" },
+      "components": [
+        {
+          "type": "body",
+          "parameters": [
+            { "type": "text", "text": String(nomeVisitante || "Amigo(a)") }
+          ]
+        }
+      ]
     }
+  };
 
-    function reiniciarFormulario() {
-      document.getElementById('nome').value = "";
-      document.getElementById('telefone').value = "";
-      document.getElementById('btnSalvar').disabled = false;
-      document.getElementById('btnSalvar').innerText = "Cadastrar";
-      document.getElementById('cadastroForm').classList.remove('hidden');
-      document.getElementById('areaQrCode').classList.add('hidden');
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "headers": { "Authorization": "Bearer " + WHATSAPP_TOKEN },
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(url, options);
+    const resJson = JSON.parse(response.getContentText());
+    return resJson.messages ? true : false;
+  } catch (erro) {
+    Logger.log(`❌ Erro no envio do visitante: ` + erro.toString());
+    return false;
+  }
+}
+
+// ==========================================
+// 5. FUNÇÕES DE LEMBRETE DE CULTO GERAL
+// ==========================================
+function dispararLembreteCultoGeral() {
+  const ss = SpreadsheetApp.openById(ID_DA_PLANILHA);
+  const abaMembros = ss.getSheetByName("Membros");
+  
+  if (!abaMembros) {
+    Logger.log("❌ Erro: Aba 'Membros' não encontrada.");
+    return;
+  }
+
+  const dadosMembros = abaMembros.getDataRange().getValues();
+  let total = 0;
+
+  for (let j = 1; j < dadosMembros.length; j++) {
+    let telefone = dadosMembros[j][2]; // Coluna C (Telefone)
+    if (telefone && String(telefone).trim() !== "") {
+      enviarAvisoWhatsApp(telefone, "Culto", "Culto Especial da Igreja Remidos", "Hoje às 19:30h", "Venha celebrar e adorar ao Senhor connosco!");
+      total++;
+      Utilities.sleep(1000); 
     }
-  </script>
-</body>
-</html>
+  }
+
+  Logger.log(`🔔 Lembrete de culto enviado para ${total} membros.`);
+}
+
+// ==========================================
+// FUNÇÕES WEBHOOK E SUPORTE
+// ==========================================
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ "status": "online" })).setMimeType(ContentService.MimeType.JSON);
+}
+function doPost(e) {
+  return ContentService.createTextOutput(JSON.stringify({ "status": "sucesso" })).setMimeType(ContentService.MimeType.JSON);
+}
