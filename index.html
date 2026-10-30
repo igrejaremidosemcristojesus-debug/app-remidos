@@ -18,6 +18,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Biblioteca para Geração de QR Code do WhatsApp -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen pb-20 font-sans">
 
@@ -203,6 +205,25 @@
               Salvar Cadastro Automaticamente
             </button>
           </form>
+
+          <!-- ÁREA DO QR CODE / VALIDAÇÃO DO WHATSAPP -->
+          <div id="areaQrCode" class="hidden text-center border-t border-slate-800 pt-4 mt-4 space-y-3">
+            <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-2.5 rounded-xl text-xs font-bold">
+              <i class="fa-solid fa-circle-check"></i> Salvo na planilha com sucesso!
+            </div>
+            <p class="text-xs text-slate-300">
+              Aponte a câmera do celular da pessoa para o QR Code para enviar a primeira mensagem e liberar o recebimento:
+            </p>
+            <div id="qrcodeCanvas" class="flex justify-center p-3 bg-white rounded-xl w-fit mx-auto"></div>
+            <div class="space-y-2">
+              <a id="btnWaLink" href="#" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-2">
+                <i class="fa-brands fa-whatsapp text-base"></i> Abrir Direto no WhatsApp
+              </a>
+              <button type="button" onclick="reiniciarFormularioCadastro()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl text-xs transition-all">
+                Novo Cadastro
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Bloco 2: Gestão do Mural de Avisos -->
@@ -267,7 +288,8 @@
 
   <script>
     // URL da API do Google Sheets
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7kWPYibqA_gp9NOo1B6xd5xgOsJ7bSj8et-WUovO-vMU5HA6IJHeBiVWxg9m6rRci7g/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwm0tvqHCqlJe9cqVBVebGbjosVNbet3s3EyynpOzve9vZR389iPBnM2SiYcyBImr1sag/exec';
+    const NUMERO_WHATSAPP_IGREJA = '5548991704111';
 
     window.onload = function() {
       carregarDevocionalDaPlanilha();
@@ -464,7 +486,7 @@
       btn.disabled = false;
     }
 
-    // SALVAR CADASTRO AUTOMATICAMENTE NA PLANILHA
+    // SALVAR CADASTRO AUTOMATICAMENTE NA PLANILHA & GERAR QR CODE
     async function salvarCadastroAutomatico(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSalvarPessoa');
@@ -493,15 +515,45 @@
           body: JSON.stringify(payload)
         });
 
-        alert('Cadastro realizado com sucesso!');
-        document.getElementById('formPessoa').reset();
+        // Gera o QR Code e exibe as opções de WhatsApp
+        exibirQrCodeOptIn(nome);
+
       } catch (erro) {
         console.log("Erro:", erro);
         alert('Erro de conexão com a API.');
+        btn.innerText = "Salvar Cadastro Automaticamente";
+        btn.disabled = false;
       }
+    }
 
-      btn.innerText = "Salvar Cadastro Automaticamente";
-      btn.disabled = false;
+    function exibirQrCodeOptIn(nome) {
+      document.getElementById('formPessoa').classList.add('hidden');
+      document.getElementById('areaQrCode').classList.remove('hidden');
+
+      const mensagem = encodeURIComponent(`Olá! Sou ${nome} e gostaria de receber os devocionais e avisos da Igreja Remidos.`);
+      const linkWa = `https://wa.me/${NUMERO_WHATSAPP_IGREJA}?text=${mensagem}`;
+
+      document.getElementById('btnWaLink').href = linkWa;
+
+      const containerQr = document.getElementById('qrcodeCanvas');
+      containerQr.innerHTML = "";
+
+      new QRCode(containerQr, {
+        text: linkWa,
+        width: 150,
+        height: 150,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+    }
+
+    function reiniciarFormularioCadastro() {
+      document.getElementById('formPessoa').reset();
+      document.getElementById('btnSalvarPessoa').innerText = "Salvar Cadastro Automaticamente";
+      document.getElementById('btnSalvarPessoa').disabled = false;
+      document.getElementById('formPessoa').classList.remove('hidden');
+      document.getElementById('areaQrCode').classList.add('hidden');
     }
 
     // AUTENTICAÇÃO COM DOIS NÍVEIS DE SENHA
@@ -547,6 +599,7 @@
       const selectTipo = document.getElementById('pessoaTipo');
       selectTipo.disabled = false;
       selectTipo.value = 'Membros';
+      reiniciarFormularioCadastro();
     }
 
     async function carregarDevocionalDaPlanilha() {
