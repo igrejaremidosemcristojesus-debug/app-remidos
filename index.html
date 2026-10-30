@@ -75,9 +75,9 @@
   </div>
 
   <script>
-    // CONFIGURAÇÃO DO SEU APLICATIVO
-    const WEB_APP_URL = "SUA_WEB_APP_URL_DO_APPS_SCRIPT_AQUI"; // Cole a URL do Web App gerada no Apps Script
-    const NUMERO_WHATSAPP_IGREJA = "551329194833619425"; // Insira o número oficial com 55 + DDD
+    // CONFIGURAÇÕES VINCULADAS COM O SEU SISTEMA
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwm0tvqHCqlJe9cqVBVebGbjosVNbet3s3EyynpOzve9vZR389iPBnM2SiYcyBImr1sag/exec";
+    const NUMERO_WHATSAPP_IGREJA = "5548991704111";
 
     function mudarAba(tipo) {
       document.getElementById('tipoCadastro').value = tipo;
@@ -111,20 +111,17 @@
       };
 
       try {
-        // Envio para a planilha via Apps Script
-        if (WEB_APP_URL && !WEB_APP_URL.includes("SUA_WEB_APP_URL")) {
-          await fetch(WEB_APP_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dados)
-          });
-        }
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dados)
+        });
 
         gerarQrCodeEAtivarJanela(nome, tipo);
 
       } catch (erro) {
-        alert("Erro ao conectar com o servidor. Verifique a URL do Apps Script.");
+        alert("Erro ao conectar com o servidor do Google Apps Script.");
         btn.disabled = false;
         btn.innerText = "Cadastrar";
       }
@@ -137,10 +134,10 @@
       const textoMensagem = encodeURIComponent(`Olá! Sou ${nome} e gostaria de receber os devocionais e avisos da Igreja Remidos.`);
       const linkWa = `https://wa.me/${NUMERO_WHATSAPP_IGREJA}?text=${textoMensagem}`;
 
-      // Atualiza link do botão
+      // Atualiza o link do botão para clique direto
       document.getElementById('btnWaLink').href = linkWa;
 
-      // Limpa QR code anterior e gera novo
+      // Limpa QR code anterior e gera o novo
       const containerQr = document.getElementById('qrcodeCanvas');
       containerQr.innerHTML = "";
       
